@@ -774,6 +774,7 @@ const DB = (() => {
               raw_order: order
             })
           });
+          try { await DB.syncStockFromCloud(); } catch (e) {}
           return { ok: res.ok, status: res.status };
         }
 
@@ -794,6 +795,38 @@ const DB = (() => {
         return { ok: true };
       } catch (err) {
         return { ok: false, error: err.message };
+      }
+    },
+
+    // LIVE STOCK SYNC FROM SUPABASE
+    syncStockFromCloud: async () => {
+      try {
+        const { url, anonKey } = DB.getCloudConfig();
+        if (!url || !url.includes('supabase.co') || !anonKey) return { ok: false };
+        const cleanUrl = url.replace(/\/+$/, '');
+        const res = await fetch(`${cleanUrl}/rest/v1/product_stocks?select=product_id,stock`, {
+          headers: {
+            'apikey': anonKey,
+            'Authorization': `Bearer ${anonKey}`
+          }
+        });
+        if (!res.ok) return { ok: false };
+        const rows = await res.json();
+        if (!Array.isArray(rows) || rows.length === 0) return { ok: false };
+
+        const products = getItem(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+        let changed = false;
+        rows.forEach(r => {
+          const idx = products.findIndex(p => p.id === r.product_id);
+          if (idx !== -1 && typeof r.stock === 'number' && products[idx].stock !== r.stock) {
+            products[idx].stock = Math.max(0, r.stock);
+            changed = true;
+          }
+        });
+        if (changed) setItem(STORAGE_KEYS.PRODUCTS, products);
+        return { ok: true, changed };
+      } catch (e) {
+        return { ok: false };
       }
     },
 

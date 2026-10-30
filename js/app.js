@@ -1341,6 +1341,11 @@ const App = (() => {
     updateWishlistBadge();
     updateAuthUI();
     setupEventListeners();
+    if (DB.syncStockFromCloud) {
+      DB.syncStockFromCloud().then(res => {
+        if (res && res.changed) renderProducts();
+      });
+    }
   };
 
   return {
