@@ -1,0 +1,700 @@
+/**
+ * ModernTakı (moderntaki.co) - Persistent Database Management Layer
+ * Handles Products, Stock Refills, User Authentication, Cart (+/-), Wishlist, Orders,
+ * and In-Place Product/Photo Editing.
+ */
+
+const DB = (() => {
+  const STORAGE_KEYS = {
+    PRODUCTS: 'moderntaki_products',
+    USERS: 'moderntaki_users',
+    CURRENT_USER: 'moderntaki_current_user',
+    CART: 'moderntaki_cart',
+    WISHLIST: 'moderntaki_wishlist',
+    ORDERS: 'moderntaki_orders',
+    BANNER: 'moderntaki_hero_banner',
+    CLOUD_SYNC: 'moderntaki_cloud_sync'
+  };
+
+  // Clean, realistic jewelry catalog without exaggerated claims
+  const INITIAL_PRODUCTS = (typeof window !== 'undefined' && Array.isArray(window.MODERNTAKI_CATALOG) && window.MODERNTAKI_CATALOG.length > 0)
+    ? window.MODERNTAKI_CATALOG
+    : [
+    {
+      id: "mt-001",
+      name: {
+        tr: "Soleil Altın Kaplama Madalyon Kolye",
+        en: "Soleil Gold Finish Medallion Necklace"
+      },
+      description: {
+        tr: "Güneş figürlü zarif madalyon kolye. Günlük kullanım ve özel kombinler için şık ve modern bir tamamlayıcı.",
+        en: "Sun medallion pendant necklace. A chic, modern accessory perfect for everyday wear and special occasions."
+      },
+      category: "kolye",
+      material: "altin",
+      priceTRY: 450,
+      discountPriceTRY: 390,
+      stock: 12,
+      badge: { tr: "Çok Satan", en: "Best Seller" },
+      rating: 4.9,
+      reviewCount: 24,
+      images: [
+        "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=800&q=80"
+      ],
+      materialOptions: [
+        { id: "altin", nameTr: "Altın Kaplama", nameEn: "Gold Finish", color: "#D4AF37" },
+        { id: "gumus", nameTr: "Gümüş Renk", nameEn: "Silver Finish", color: "#C0C0C0" }
+      ],
+      sizes: ["40 cm + 5 cm Uzatma", "45 cm + 5 cm Uzatma"]
+    },
+    {
+      id: "mt-002",
+      name: {
+        tr: "Éternité Baget Taşlı Zarif Yüzük",
+        en: "Éternité Baguette Shimmer Ring"
+      },
+      description: {
+        tr: "Işıltılı baget zirkon taşlı modern yüzük. Sade tasarımıyla tek başına veya diğer yüzüklerle kombinlenebilir.",
+        en: "Sparkling baguette zirconia ring. Minimalist and versatile for stacking or solo styling."
+      },
+      category: "yuzuk",
+      material: "gumus",
+      priceTRY: 320,
+      discountPriceTRY: null,
+      stock: 8,
+      badge: { tr: "Yeni", en: "New" },
+      rating: 4.8,
+      reviewCount: 16,
+      images: [
+        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1603561591411-07134e71a2a9?auto=format&fit=crop&w=800&q=80"
+      ],
+      materialOptions: [
+        { id: "gumus", nameTr: "Gümüş Renk", nameEn: "Silver Finish", color: "#C0C0C0" },
+        { id: "altin", nameTr: "Altın Kaplama", nameEn: "Gold Finish", color: "#D4AF37" }
+      ],
+      sizes: ["12 Numara", "14 Numara", "16 Numara", "18 Numara"]
+    },
+    {
+      id: "mt-003",
+      name: {
+        tr: "Riviera Zirkon Su Yolu Bileklik",
+        en: "Riviera Zirconia Tennis Bracelet"
+      },
+      description: {
+        tr: "Işıltılı sıralı zirkon taşlı su yolu bileklik. Kilit mekanizmasıyla güvenli ve konforlu kullanım sağlar.",
+        en: "Classic tennis bracelet with continuous zirconia stones and secure clasp."
+      },
+      category: "bileklik",
+      material: "altin",
+      priceTRY: 490,
+      discountPriceTRY: 420,
+      stock: 7,
+      badge: { tr: "Özel Fırsat", en: "Special Offer" },
+      rating: 4.9,
+      reviewCount: 31,
+      images: [
+        "https://images.unsplash.com/photo-1598560917505-59a3ad559071?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1598560917505-59a3ad559071?auto=format&fit=crop&w=800&q=80"
+      ],
+      materialOptions: [
+        { id: "altin", nameTr: "Altın Kaplama", nameEn: "Gold Plated", color: "#D4AF37" },
+        { id: "gumus", nameTr: "Gümüş Renk", nameEn: "Silver Finish", color: "#C0C0C0" }
+      ],
+      sizes: ["16 cm", "18 cm (Standart)"]
+    },
+    {
+      id: "mt-004",
+      name: {
+        tr: "Baroque Doğal İnci Küpe",
+        en: "Baroque Natural Pearl Earrings"
+      },
+      description: {
+        tr: "Organik formda doğal tatlı su incisi sarkıt küpe. Her incinin kendine has doğal bir dokusu vardır.",
+        en: "Organic freshwater pearl drop earrings with elegant lightweight hooks."
+      },
+      category: "kupe",
+      material: "inci",
+      priceTRY: 380,
+      discountPriceTRY: null,
+      stock: 10,
+      badge: { tr: "Trend", en: "Trending" },
+      rating: 4.9,
+      reviewCount: 19,
+      images: [
+        "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=800&q=80"
+      ],
+      materialOptions: [
+        { id: "altin", nameTr: "Altın Renk Kanca", nameEn: "Gold Color Hook", color: "#D4AF37" },
+        { id: "gumus", nameTr: "Gümüş Renk Kanca", nameEn: "Silver Color Hook", color: "#C0C0C0" }
+      ],
+      sizes: ["Standart Ebat"]
+    },
+    {
+      id: "mt-005",
+      name: {
+        tr: "Venezia Burgu Zincir Kolye",
+        en: "Venezia Twisted Rope Chain"
+      },
+      description: {
+        tr: "Dökümlü burgu zincir tasarımı. Günlük kombinlerinizde tişört veya gömleklerle mükemmel uyum sağlar.",
+        en: "Twisted rope chain necklace. Perfect for layering or as a simple statement."
+      },
+      category: "kolye",
+      material: "altin",
+      priceTRY: 390,
+      discountPriceTRY: 340,
+      stock: 9,
+      badge: { tr: "Temel Parça", en: "Essential" },
+      rating: 4.7,
+      reviewCount: 22,
+      images: [
+        "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=800&q=80"
+      ],
+      materialOptions: [
+        { id: "altin", nameTr: "Altın Kaplama", nameEn: "Gold Plated", color: "#D4AF37" },
+        { id: "gumus", nameTr: "Gümüş Renk", nameEn: "Silver Finish", color: "#C0C0C0" }
+      ],
+      sizes: ["45 cm", "50 cm"]
+    },
+    {
+      id: "mt-006",
+      name: {
+        tr: "Vintage Zümrüt Yeşili Baget Yüzük",
+        en: "Vintage Emerald Tone Baguette Ring"
+      },
+      description: {
+        tr: "Zümrüt yeşili zirkon taş ve minik taş detaylarıyla zenginleştirilmiş vintage esintili yüzük.",
+        en: "Emerald-green tone centerpiece with pavé accents for a vintage look."
+      },
+      category: "yuzuk",
+      material: "altin",
+      priceTRY: 350,
+      discountPriceTRY: 290,
+      stock: 6,
+      badge: null,
+      rating: 4.8,
+      reviewCount: 14,
+      images: [
+        "https://images.unsplash.com/photo-1603561591411-07134e71a2a9?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80"
+      ],
+      materialOptions: [
+        { id: "altin", nameTr: "Altın Kaplama", nameEn: "Gold Plated", color: "#D4AF37" },
+        { id: "rose", nameTr: "Rose Renk", nameEn: "Rose Finish", color: "#B76E79" }
+      ],
+      sizes: ["12 Numara", "14 Numara", "16 Numara", "18 Numara"]
+    },
+    {
+      id: "mt-007",
+      name: {
+        tr: "Lumière Kalın Halka Küpe (25mm)",
+        en: "Lumière Bold Hoop Earrings"
+      },
+      description: {
+        tr: "Hafif yapılı, kulağı yormayan parlak cilalı modern halka küpe. Her kombinin vazgeçilmezi.",
+        en: "Lightweight hollow hoop earrings with high-polish finish."
+      },
+      category: "kupe",
+      material: "altin",
+      priceTRY: 280,
+      discountPriceTRY: null,
+      stock: 14,
+      badge: null,
+      rating: 4.9,
+      reviewCount: 28,
+      images: [
+        "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80"
+      ],
+      materialOptions: [
+        { id: "altin", nameTr: "Altın Kaplama", nameEn: "Gold Plated", color: "#D4AF37" },
+        { id: "gumus", nameTr: "Gümüş Renk", nameEn: "Silver Finish", color: "#C0C0C0" }
+      ],
+      sizes: ["20 mm", "25 mm"]
+    },
+    {
+      id: "mt-008",
+      name: {
+        tr: "Milano Örgü Dokulu Kelepçe Bileklik",
+        en: "Milano Mesh Textured Bangle"
+      },
+      description: {
+        tr: "Esnek ergonomik formuyla her bileğe uyum sağlayan modern kelepçe bileklik.",
+        en: "Flexible ergonomic mesh bangle with modern contours."
+      },
+      category: "bileklik",
+      material: "rose",
+      priceTRY: 460,
+      discountPriceTRY: 390,
+      stock: 5,
+      badge: null,
+      rating: 4.8,
+      reviewCount: 18,
+      images: [
+        "https://images.unsplash.com/photo-1598560917505-59a3ad559071?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1598560917505-59a3ad559071?auto=format&fit=crop&w=800&q=80"
+      ],
+      materialOptions: [
+        { id: "rose", nameTr: "Rose Renk", nameEn: "Rose Finish", color: "#B76E79" },
+        { id: "altin", nameTr: "Altın Kaplama", nameEn: "Gold Plated", color: "#D4AF37" }
+      ],
+      sizes: ["Standart (Ayarlanabilir)"]
+    }
+  ];
+
+  const INITIAL_USERS = [
+    {
+      id: "usr-001",
+      name: "Elif Yılmaz",
+      email: "demo@moderntaki.co",
+      password: "123",
+      phone: "+90 532 555 12 34",
+      city: "İstanbul",
+      address: "Nişantaşı Mah. Teşvikiye Cad. No: 14, Şişli",
+      createdAt: "2026-01-15T10:00:00.000Z"
+    }
+  ];
+
+  // Helper storage operations
+  const getItem = (key, fallback) => {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  };
+
+  const setItem = (key, value) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      console.error("Storage error:", e);
+    }
+  };
+
+  // Always update to current cleaner catalog if needed
+  const init = () => {
+    // Check if external catalog file (products-data.js) has updated version
+    const savedVersion = localStorage.getItem('moderntaki_catalog_version');
+    const catalogVersion = (typeof window !== 'undefined' && window.MODERNTAKI_CATALOG_VERSION) ? window.MODERNTAKI_CATALOG_VERSION : null;
+
+    if (!localStorage.getItem(STORAGE_KEYS.PRODUCTS) || (catalogVersion && catalogVersion !== savedVersion)) {
+      const catalogToLoad = (typeof window !== 'undefined' && Array.isArray(window.MODERNTAKI_CATALOG) && window.MODERNTAKI_CATALOG.length > 0)
+        ? window.MODERNTAKI_CATALOG
+        : INITIAL_PRODUCTS;
+      setItem(STORAGE_KEYS.PRODUCTS, catalogToLoad);
+      if (catalogVersion) {
+        localStorage.setItem('moderntaki_catalog_version', catalogVersion);
+      }
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.USERS)) {
+      setItem(STORAGE_KEYS.USERS, INITIAL_USERS);
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.CART)) {
+      setItem(STORAGE_KEYS.CART, []);
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.WISHLIST)) {
+      setItem(STORAGE_KEYS.WISHLIST, []);
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.ORDERS)) {
+      setItem(STORAGE_KEYS.ORDERS, []);
+    }
+  };
+
+  init();
+
+  return {
+    // PRODUCTS CATALOG
+    getProducts: () => getItem(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS),
+
+    getProductById: (id) => {
+      const products = getItem(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+      return products.find(p => p.id === id) || null;
+    },
+
+    addProduct: (productData) => {
+      const products = getItem(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+      const newProduct = {
+        id: "mt-" + Date.now().toString().slice(-6),
+        name: {
+          tr: productData.nameTr || "Yeni Takı",
+          en: productData.nameEn || productData.nameTr || "New Jewelry"
+        },
+        description: {
+          tr: productData.descriptionTr || "Zarif ve modern takı tasarımı.",
+          en: productData.descriptionEn || "Elegant modern jewelry design."
+        },
+        category: productData.category || "kolye",
+        material: productData.material || "altin",
+        priceTRY: parseFloat(productData.priceTRY) || 0,
+        discountPriceTRY: productData.discountPriceTRY ? parseFloat(productData.discountPriceTRY) : null,
+        stock: parseInt(productData.stock, 10) || 5,
+        badge: productData.badgeTr ? { tr: productData.badgeTr, en: productData.badgeEn || productData.badgeTr } : null,
+        rating: 5.0,
+        reviewCount: 1,
+        images: productData.images && productData.images.length > 0 ? productData.images : [
+          "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=800&q=80"
+        ],
+        materialOptions: [
+          { id: "altin", nameTr: "Altın Kaplama", nameEn: "Gold Plated", color: "#D4AF37" },
+          { id: "gumus", nameTr: "Gümüş Renk", nameEn: "Silver Finish", color: "#C0C0C0" }
+        ],
+        sizes: productData.sizes || ["Standart Ebat"]
+      };
+
+      products.unshift(newProduct);
+      setItem(STORAGE_KEYS.PRODUCTS, products);
+      return newProduct;
+    },
+
+    // In-place edit of existing product (Change Photo, Name, Price, Stock)
+    updateProduct: (productId, fields) => {
+      const products = getItem(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+      const index = products.findIndex(p => p.id === productId);
+      if (index === -1) return null;
+
+      const p = products[index];
+
+      if (fields.nameTr) p.name.tr = fields.nameTr;
+      if (fields.nameEn) p.name.en = fields.nameEn;
+      if (fields.priceTRY !== undefined) p.priceTRY = parseFloat(fields.priceTRY);
+      if (fields.discountPriceTRY !== undefined) {
+        p.discountPriceTRY = fields.discountPriceTRY ? parseFloat(fields.discountPriceTRY) : null;
+      }
+      if (fields.stock !== undefined) p.stock = parseInt(fields.stock, 10);
+      if (fields.category) p.category = fields.category;
+      if (fields.material) p.material = fields.material;
+      if (fields.descriptionTr) p.description.tr = fields.descriptionTr;
+      if (fields.images && fields.images.length > 0) {
+        p.images = fields.images;
+      }
+
+      products[index] = p;
+      setItem(STORAGE_KEYS.PRODUCTS, products);
+      return p;
+    },
+
+    updateStock: (productId, newStock) => {
+      const products = getItem(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+      const index = products.findIndex(p => p.id === productId);
+      if (index !== -1) {
+        products[index].stock = Math.max(0, parseInt(newStock, 10));
+        setItem(STORAGE_KEYS.PRODUCTS, products);
+        return products[index];
+      }
+      return null;
+    },
+
+    adjustStock: (productId, delta) => {
+      const products = getItem(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+      const index = products.findIndex(p => p.id === productId);
+      if (index !== -1) {
+        const current = products[index].stock || 0;
+        products[index].stock = Math.max(0, current + delta);
+        setItem(STORAGE_KEYS.PRODUCTS, products);
+        return products[index];
+      }
+      return null;
+    },
+
+    deleteProduct: (productId) => {
+      const products = getItem(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+      const filtered = products.filter(p => p.id !== productId);
+      setItem(STORAGE_KEYS.PRODUCTS, filtered);
+      return true;
+    },
+
+    // Reset to clean initial products
+    resetCatalogToClean: () => {
+      setItem(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+      return true;
+    },
+
+    // USERS & AUTH
+    getUsers: () => getItem(STORAGE_KEYS.USERS, INITIAL_USERS),
+
+    getCurrentUser: () => getItem(STORAGE_KEYS.CURRENT_USER, null),
+
+    login: (email, password) => {
+      const users = getItem(STORAGE_KEYS.USERS, INITIAL_USERS);
+      const user = users.find(u => u.email.toLowerCase() === email.trim().toLowerCase() && u.password === password);
+      if (user) {
+        const safeUser = { ...user };
+        delete safeUser.password;
+        setItem(STORAGE_KEYS.CURRENT_USER, safeUser);
+        return { success: true, user: safeUser };
+      }
+      return { success: false, message: "E-posta veya şifre hatalı!" };
+    },
+
+    register: (userData) => {
+      const users = getItem(STORAGE_KEYS.USERS, INITIAL_USERS);
+      const exists = users.some(u => u.email.toLowerCase() === userData.email.trim().toLowerCase());
+      if (exists) {
+        return { success: false, message: "Bu e-posta adresiyle zaten kayıtlı bir hesap var!" };
+      }
+
+      const newUser = {
+        id: "usr-" + Date.now().toString().slice(-6),
+        name: userData.name.trim(),
+        email: userData.email.trim().toLowerCase(),
+        password: userData.password,
+        phone: userData.phone || "",
+        city: userData.city || "",
+        address: userData.address || "",
+        createdAt: new Date().toISOString()
+      };
+
+      users.push(newUser);
+      setItem(STORAGE_KEYS.USERS, users);
+
+      const safeUser = { ...newUser };
+      delete safeUser.password;
+      setItem(STORAGE_KEYS.CURRENT_USER, safeUser);
+      return { success: true, user: safeUser };
+    },
+
+    logout: () => {
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      return true;
+    },
+
+    // CART (with +/- quantity stepper)
+    getCart: () => getItem(STORAGE_KEYS.CART, []),
+
+    addToCart: (productId, quantity = 1, options = {}) => {
+      const cart = getItem(STORAGE_KEYS.CART, []);
+      const product = DB.getProductById(productId);
+      if (!product) return { success: false, message: "Ürün bulunamadı" };
+
+      if (product.stock <= 0) {
+        return { success: false, message: "Ürün stokta tükenmiştir!" };
+      }
+
+      const selectedMaterial = options.material || (product.materialOptions && product.materialOptions[0]?.id) || 'default';
+      const selectedSize = options.size || (product.sizes && product.sizes[0]) || 'Standart';
+
+      const existingIndex = cart.findIndex(item => 
+        item.productId === productId && 
+        item.material === selectedMaterial && 
+        item.size === selectedSize
+      );
+
+      const requestedQty = Math.max(1, parseInt(quantity, 10));
+
+      if (existingIndex > -1) {
+        const newTotalQty = cart[existingIndex].quantity + requestedQty;
+        if (newTotalQty > product.stock) {
+          cart[existingIndex].quantity = product.stock;
+          setItem(STORAGE_KEYS.CART, cart);
+          return { success: true, message: `Maksimum stok miktarına (${product.stock} adet) ulaşıldı.`, cart };
+        }
+        cart[existingIndex].quantity = newTotalQty;
+      } else {
+        const cappedQty = Math.min(requestedQty, product.stock);
+        cart.push({
+          cartItemId: "cart-" + Date.now().toString().slice(-6) + Math.floor(Math.random() * 100),
+          productId: product.id,
+          quantity: cappedQty,
+          material: selectedMaterial,
+          size: selectedSize,
+          addedAt: new Date().toISOString()
+        });
+      }
+
+      setItem(STORAGE_KEYS.CART, cart);
+      return { success: true, cart };
+    },
+
+    updateCartQuantity: (cartItemId, quantity) => {
+      const cart = getItem(STORAGE_KEYS.CART, []);
+      const index = cart.findIndex(i => i.cartItemId === cartItemId);
+      if (index === -1) return { success: false };
+
+      const item = cart[index];
+      const product = DB.getProductById(item.productId);
+      const newQty = parseInt(quantity, 10);
+
+      if (newQty <= 0) {
+        cart.splice(index, 1);
+      } else {
+        const maxStock = product ? product.stock : 99;
+        cart[index].quantity = Math.min(newQty, maxStock);
+      }
+
+      setItem(STORAGE_KEYS.CART, cart);
+      return { success: true, cart };
+    },
+
+    removeFromCart: (cartItemId) => {
+      const cart = getItem(STORAGE_KEYS.CART, []);
+      const filtered = cart.filter(i => i.cartItemId !== cartItemId);
+      setItem(STORAGE_KEYS.CART, filtered);
+      return { success: true, cart: filtered };
+    },
+
+    clearCart: () => {
+      setItem(STORAGE_KEYS.CART, []);
+      return true;
+    },
+
+    // WISHLIST (Favorites)
+    getWishlist: () => getItem(STORAGE_KEYS.WISHLIST, []),
+
+    toggleWishlist: (productId) => {
+      let wishlist = getItem(STORAGE_KEYS.WISHLIST, []);
+      const exists = wishlist.includes(productId);
+      if (exists) {
+        wishlist = wishlist.filter(id => id !== productId);
+      } else {
+        wishlist.push(productId);
+      }
+      setItem(STORAGE_KEYS.WISHLIST, wishlist);
+      return { isWishlisted: !exists, wishlist };
+    },
+
+    isWishlisted: (productId) => {
+      const wishlist = getItem(STORAGE_KEYS.WISHLIST, []);
+      return wishlist.includes(productId);
+    },
+
+    // ORDERS
+    getOrders: () => getItem(STORAGE_KEYS.ORDERS, []),
+
+    createOrder: (orderPayload) => {
+      const currentUser = DB.getCurrentUser();
+      if (!currentUser) {
+        return { success: false, message: "Sipariş oluşturmak için lütfen önce giriş yapın!" };
+      }
+
+      const cart = DB.getCart();
+      if (cart.length === 0) {
+        return { success: false, message: "Sepetinizde ürün bulunmuyor!" };
+      }
+
+      const orderItems = [];
+      let totalAmountTRY = 0;
+
+      for (const item of cart) {
+        const product = DB.getProductById(item.productId);
+        if (!product) continue;
+
+        if (product.stock < item.quantity) {
+          return {
+            success: false,
+            message: `"${product.name.tr}" için yeterli stok bulunmuyor! Kalan stok: ${product.stock}`
+          };
+        }
+
+        const unitPrice = product.discountPriceTRY || product.priceTRY;
+        totalAmountTRY += unitPrice * item.quantity;
+
+        orderItems.push({
+          productId: product.id,
+          name: product.name,
+          image: product.images[0],
+          material: item.material,
+          size: item.size,
+          quantity: item.quantity,
+          unitPriceTRY: unitPrice,
+          totalPriceTRY: unitPrice * item.quantity
+        });
+      }
+
+      for (const item of cart) {
+        DB.adjustStock(item.productId, -item.quantity);
+      }
+
+      const orderNumber = "MT-" + Math.floor(100000 + Math.random() * 900000);
+      const orders = getItem(STORAGE_KEYS.ORDERS, []);
+
+      const newOrder = {
+        orderId: "ord-" + Date.now().toString().slice(-6),
+        orderNumber: orderNumber,
+        userId: currentUser.id,
+        userName: currentUser.name,
+        userEmail: currentUser.email,
+        phone: orderPayload.phone || currentUser.phone,
+        shippingAddress: {
+          fullName: orderPayload.fullName || currentUser.name,
+          city: orderPayload.city || currentUser.city,
+          district: orderPayload.district || "",
+          address: orderPayload.address || currentUser.address,
+          postalCode: orderPayload.postalCode || ""
+        },
+        shippingCarrier: orderPayload.shippingCarrier || "Yurtiçi Kargo",
+        paymentMethod: orderPayload.paymentMethod || "Kredi Kartı",
+        items: orderItems,
+        subtotalTRY: totalAmountTRY,
+        shippingFeeTRY: (totalAmountTRY >= 500 || totalAmountTRY === 0) ? 0 : 49,
+        totalTRY: totalAmountTRY + ((totalAmountTRY >= 500 || totalAmountTRY === 0) ? 0 : 49),
+        status: "Hazırlanıyor",
+        createdAt: new Date().toISOString()
+      };
+
+      orders.unshift(newOrder);
+      setItem(STORAGE_KEYS.ORDERS, orders);
+      DB.clearCart();
+      try { DB.pushOrderToCloud(newOrder, 'createOrder'); } catch (e) {}
+
+      return { success: true, order: newOrder };
+    },
+
+    // CLOUD ORDER SUBMISSION (Write-Only Public Endpoint)
+    getCloudConfig: () => {
+      const local = getItem(STORAGE_KEYS.CLOUD_SYNC, null);
+      const winCfg = (typeof window !== 'undefined' && window.MODERNTAKI_CLOUD_CONFIG) ? window.MODERNTAKI_CLOUD_CONFIG : {};
+      return {
+        url: (local && local.url) || winCfg.url || ''
+      };
+    },
+
+    pushOrderToCloud: async (order) => {
+      try {
+        const { url } = DB.getCloudConfig();
+        if (!url) return { ok: false, reason: 'no_url' };
+        const cleanUrl = url.replace(/\/+$/, '');
+        if (cleanUrl.includes('firebaseio.com') || cleanUrl.includes('firebasedatabase.app')) {
+          await fetch(`${cleanUrl}/orders/${encodeURIComponent(order.orderId)}.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(order)
+          });
+          return { ok: true };
+        }
+        await fetch(cleanUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'createOrder', order })
+        });
+        return { ok: true };
+      } catch (err) {
+        return { ok: false, error: err.message };
+      }
+    },
+
+    // HERO BANNER
+    getHeroBanner: () => {
+      const banner = getItem(STORAGE_KEYS.BANNER, null);
+      if (banner && banner.imageUrl) return banner;
+      if (typeof window !== 'undefined' && window.MODERNTAKI_HERO_BANNER) {
+        return window.MODERNTAKI_HERO_BANNER;
+      }
+      return {
+        imageUrl: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=1000&q=85",
+        badge: "Öne Çıkan Model",
+        title: "Soleil Madalyon Kolye"
+      };
+    },
+
+    setHeroBanner: (bannerData) => {
+      setItem(STORAGE_KEYS.BANNER, bannerData);
+      return bannerData;
+    }
+  };
+})();

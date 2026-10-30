@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO & Google Optimization (Semantik & Schema Uyumlu) -->
+  <title>ModernTakı | moderntaki.co - Zarif ve Modern Takı Modelleri</title>
+  <meta name="description" content="moderntaki.co: Zarif kolyeler, şık yüzükler, inci küpeler ve trend bileklikler. Tarzınızı tamamlayan en yeni takı koleksiyonu.">
+  <meta name="keywords" content="takı, kolye, yüzük, küpe, bileklik, moderntaki.co, kadın takı, zarif aksesuar">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://moderntaki.co/">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="apple-touch-icon" href="images/logo.png">
+
+  <!-- Open Graph / Sosyal Medya Önizleme -->
+  <meta property="og:title" content="ModernTakı | moderntaki.co">
+  <meta property="og:description" content="Zarif ve modern takı tasarımları ile tarzınızı tamamlayın.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=1200&q=80">
+  <meta property="og:url" content="https://moderntaki.co">
+  <meta property="og:type" content="website">
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "JewelryStore",
+    "name": "ModernTakı",
+    "url": "https://moderntaki.co",
+    "image": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=1200&q=80",
+    "description": "Zarif ve modern takı tasarımları.",
+    "priceRange": "₺₺",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "İstanbul",
+      "addressCountry": "TR"
+    },
+    "sameAs": [
+      "https://www.instagram.com/moderntaki.co",
+      "https://www.tiktok.com/@moderntakiciniz",
+      "https://www.youtube.com/@moderntakiciniz"
+    ]
+  }
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            noir: { 900: '#141413', 800: '#212120', 700: '#383836' },
+            gold: { 300: '#E6C280', 400: '#D8B26E', 500: '#C5A059', 600: '#A8823B' },
+            sand: { 50: '#FCFAF7', 100: '#F7F3ED', 200: '#EFE8DD', 300: '#E2D9CB' }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Marka ikonları: yeni Lucide sürümlerinde Instagram/YouTube yok, bu yüzden kendi SVG'lerimizi kullanıyoruz -->
+  <script>
+    (function () {
+      var ICONS = {
+        instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>',
+        youtube: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>',
+        tiktok: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>'
+      };
+      function swapBrandIcons() {
+        document.querySelectorAll('i[data-lucide="instagram"], i[data-lucide="youtube"], i[data-lucide="tiktok"]').forEach(function (el) {
+          var holder = document.createElement('span');
+          holder.innerHTML = ICONS[el.getAttribute('data-lucide')];
+          var svg = holder.firstChild;
+          svg.setAttribute('class', el.getAttribute('class') || '');
+          el.replaceWith(svg);
+        });
+      }
+      if (window.lucide && lucide.createIcons) {
+        var original = lucide.createIcons;
+        lucide.createIcons = function () {
+          swapBrandIcons();
+          return original.apply(lucide, arguments);
+        };
+      }
+    })();
+  </script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-[#FCFAF7] text-[#141413] flex flex-col min-h-screen overflow-x-hidden">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed top-6 right-6 z-[9999] flex flex-col gap-2.5 pointer-events-none"></div>
+
+  <!-- 1. TOP ANNOUNCEMENT BAR & CURRENCY/LANG -->
+  <aside aria-label="Duyuru ve Ayarlar" class="bg-[#141413] text-[#FAF8F5] text-xs py-2 px-4 border-b border-[#212120]">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Social Media Handles (Instagram, TikTok, YouTube) -->
+      <div class="flex items-center gap-3">
+        <span class="text-[11px] text-[#A8823B] font-medium hidden sm:inline">Bizi Takip Edin:</span>
+        <a href="https://instagram.com/moderntaki.co" target="_blank" rel="noopener noreferrer" class="hover:text-[#E6C280] transition-colors flex items-center gap-1 text-[11px]">
+          <i data-lucide="instagram" class="w-3.5 h-3.5 text-[#E6C280]"></i>
+          <span class="hidden md:inline">@moderntaki.co</span>
+        </a>
+        <span class="text-[#383836]">|</span>
+        <a href="https://www.tiktok.com/@moderntakiciniz" target="_blank" rel="noopener noreferrer" class="hover:text-[#E6C280] transition-colors flex items-center gap-1 text-[11px]">
+          <i data-lucide="tiktok" class="w-3.5 h-3.5 text-[#E6C280]"></i>
+          <span class="hidden md:inline">TikTok</span>
+        </a>
+        <span class="text-[#383836]">|</span>
+        <a href="https://youtube.com/@moderntakiciniz" target="_blank" rel="noopener noreferrer" class="hover:text-[#E6C280] transition-colors flex items-center gap-1 text-[11px]">
+          <i data-lucide="youtube" class="w-3.5 h-3.5 text-[#E6C280]"></i>
+          <span class="hidden md:inline">YouTube</span>
+        </a>
+      </div>
+
+      <!-- Center Announcement -->
+      <div class="hidden lg:block text-center font-serif-luxury tracking-wide text-xs sm:text-sm text-[#EFE8DD] flex-1" data-i18n="announcement">
+        ✨ moderntaki.co | Tarzınızı tamamlayan en yeni takı tasarımları
+      </div>
+
+      <!-- Currency & Language Switches -->
+      <div class="flex items-center gap-3 text-[11px]">
+        <div class="flex items-center bg-[#212120] rounded-lg p-0.5 border border-[#383836]">
+          <button onclick="App.switchCurrency('TRY')" data-currency="TRY" class="currency-btn px-2 py-0.5 rounded text-[10px] transition-colors">₺ TRY</button>
+          <button onclick="App.switchCurrency('USD')" data-currency="USD" class="currency-btn px-2 py-0.5 rounded text-[10px] transition-colors">$ USD</button>
+          <button onclick="App.switchCurrency('EUR')" data-currency="EUR" class="currency-btn px-2 py-0.5 rounded text-[10px] transition-colors">€ EUR</button>
+        </div>
+
+        <div class="flex items-center bg-[#212120] rounded-lg p-0.5 border border-[#383836]">
+          <button onclick="App.switchLanguage('tr')" data-lang="tr" class="lang-btn px-2 py-0.5 rounded text-[10px] transition-colors">TR 🇹🇷</button>
+          <button onclick="App.switchLanguage('en')" data-lang="en" class="lang-btn px-2 py-0.5 rounded text-[10px] transition-colors">EN 🇬🇧</button>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- 2. MAIN STOREFRONT NAVIGATION HEADER -->
+  <header class="sticky top-0 z-40 bg-[#FCFAF7]/95 backdrop-blur-md border-b border-[#EFE8DD] transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
+        
+        <!-- Brand Logo -->
+        <div class="flex items-center gap-6">
+          <a href="#" class="flex items-center gap-3 group">
+            <img src="images/logo.png" alt="ModernTakı logosu" width="44" height="44" class="w-9 h-9 sm:w-11 sm:h-11 rounded-full shrink-0 opacity-95 group-hover:opacity-100 transition-opacity">
+            <span class="flex flex-col">
+            <span class="font-serif-luxury text-xl sm:text-3xl font-bold tracking-tight text-[#141413] group-hover:text-[#A8823B] transition-colors flex items-center gap-1">
+              ModernTakı
+              <span class="text-[11px] font-sans font-semibold px-1.5 py-0.5 rounded bg-[#141413] text-[#E6C280] tracking-normal">.co</span>
+            </span>
+            <span class="hidden sm:block text-[9px] font-medium tracking-[0.25em] text-[#A8823B] uppercase" data-i18n="tagline">
+              Modern & Zarif Takı Koleksiyonu
+            </span>
+            </span>
+          </a>
+
+          <!-- Navigation Links -->
+          <nav class="hidden lg:flex items-center gap-7 text-xs font-semibold uppercase tracking-wider text-[#383836]">
+            <a href="#koleksiyon" onclick="App.setCategory('all')" class="hover:text-[#A8823B] transition-colors" data-i18n="nav_home">Ana Sayfa</a>
+            <a href="#koleksiyon" onclick="App.setCategory('kolye')" class="hover:text-[#A8823B] transition-colors" data-i18n="nav_necklaces">Kolyeler</a>
+            <a href="#koleksiyon" onclick="App.setCategory('yuzuk')" class="hover:text-[#A8823B] transition-colors" data-i18n="nav_rings">Yüzükler</a>
+            <a href="#koleksiyon" onclick="App.setCategory('bileklik')" class="hover:text-[#A8823B] transition-colors" data-i18n="nav_bracelets">Bileklikler</a>
+            <a href="#koleksiyon" onclick="App.setCategory('kupe')" class="hover:text-[#A8823B] transition-colors" data-i18n="nav_earrings">Küpeler</a>
+            <a href="#sosyal-medya" class="hover:text-[#A8823B] transition-colors flex items-center gap-1 text-[#C5A059]">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>Sosyal Medya</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="hidden md:flex flex-1 max-w-xs mx-4">
+          <div class="relative w-full">
+            <input 
+              type="text" 
+              id="search-input" 
+              placeholder="Kolye, yüzük veya küpe arayın..." 
+              class="w-full pl-9 pr-4 py-2 bg-white rounded-full border border-[#EFE8DD] text-xs focus:outline-none focus:border-[#C5A059] focus:ring-1 focus:ring-[#C5A059] transition-all placeholder:text-neutral-400"
+            >
+            <i data-lucide="search" class="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          </div>
+        </div>
+
+        <!-- Right Action Icons: Wishlist, User, Cart -->
+        <div class="flex items-center gap-1.5 sm:gap-4 shrink-0">
+          
+          <!-- Wishlist -->
+          <button 
+            onclick="App.openWishlistModal()" 
+            class="relative p-2.5 rounded-full hover:bg-white text-[#141413] transition-colors" 
+            title="Favorilerim"
+          >
+            <i data-lucide="heart" class="w-5 h-5"></i>
+            <span class="wishlist-counter hidden absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#141413] text-[#FAF8F5] text-[10px] font-bold flex items-center justify-center border-2 border-white">
+              0
+            </span>
+          </button>
+
+          <!-- User Account / Login (Mandatory for Checkout) -->
+          <button 
+            id="nav-user-btn" 
+            onclick="App.openAuthModal('login')" 
+            class="flex items-center gap-1.5 px-3 py-2 rounded-full hover:bg-white text-[#141413] transition-colors text-xs font-semibold"
+          >
+            <i data-lucide="user" class="w-4 h-4"></i>
+            <span id="nav-user-label" class="hidden sm:inline">Giriş Yap</span>
+          </button>
+
+          <!-- Cart Trigger -->
+          <button 
+            onclick="App.openCartDrawer()" 
+            class="relative flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#141413] hover:bg-[#A8823B] text-white transition-all shadow-md active:scale-98"
+            title="Sepetim"
+          >
+            <i data-lucide="shopping-bag" class="w-4 h-4 text-[#E6C280]"></i>
+            <span class="text-xs font-bold hidden sm:inline">Sepet</span>
+            <span class="cart-counter hidden w-5 h-5 rounded-full bg-[#C5A059] text-white text-[10px] font-bold flex items-center justify-center">
+              0
+            </span>
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow">
+    
+    <!-- 3. HERO BANNER -->
+    <section class="relative bg-gradient-to-b from-[#F7F3ED] to-[#FCFAF7] border-b border-[#EFE8DD] overflow-hidden py-14 sm:py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          
+          <div class="lg:col-span-7 flex flex-col items-start text-left">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#D8B26E]/50 text-xs font-semibold text-[#A8823B] uppercase tracking-wider mb-4 shadow-sm">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#C5A059]"></i>
+              <span data-i18n="hero_badge">Yeni Sezon Koleksiyonu</span>
+            </div>
+
+            <h1 class="font-serif-luxury text-4xl sm:text-5xl lg:text-6xl text-[#141413] font-normal leading-[1.15] mb-5">
+              Modern Çizgiler,<br>
+              <span class="italic font-normal gold-gradient-text">Zarif Parıltı.</span>
+            </h1>
+
+            <p class="text-base sm:text-lg text-[#383836] max-w-xl font-light leading-relaxed mb-8" data-i18n="hero_subtitle">
+              Tarzınızı tamamlayan modern ve zarif takı tasarımları. Günlük şıklığınız ve özel anlarınız için özenle seçilmiş parçalar moderntaki.co’da.
+            </p>
+
+            <div class="flex flex-wrap items-center gap-4">
+              <a href="#koleksiyon" class="px-8 py-3.5 rounded-full bg-[#141413] hover:bg-[#A8823B] text-white text-xs font-semibold tracking-widest uppercase transition-all shadow-lg active:scale-98 flex items-center gap-2">
+                <span data-i18n="hero_cta_explore">Koleksiyonu Keşfet</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-[#E6C280]"></i>
+              </a>
+              <a href="#sosyal-medya" class="px-6 py-3.5 rounded-full bg-white hover:bg-[#F7F3ED] text-[#141413] border border-[#EFE8DD] text-xs font-semibold tracking-wider uppercase transition-colors flex items-center gap-2">
+                <i data-lucide="instagram" class="w-4 h-4 text-[#C5A059]"></i>
+                <span>@moderntaki.co</span>
+              </a>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-[#EFE8DD] flex flex-wrap items-center gap-6 text-xs text-[#383836]">
+              <div class="flex items-center gap-2">
+                <i data-lucide="shield-check" class="w-4 h-4 text-[#A8823B]"></i>
+                <span>Güvenli Alışveriş</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i data-lucide="truck" class="w-4 h-4 text-[#A8823B]"></i>
+                <span>Hızlı Kargo</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i data-lucide="gift" class="w-4 h-4 text-[#A8823B]"></i>
+                <span>Özenli Paketleme</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="lg:col-span-5 relative">
+            <div class="relative mx-auto max-w-md lg:max-w-none">
+              <div class="relative rounded-2xl overflow-hidden border-4 border-white shadow-xl aspect-[4/5] bg-[#F7F3ED]">
+                <img 
+                  id="hero-banner-img"
+                  src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=1000&q=85" 
+                  alt="ModernTakı Kolye" 
+                  class="w-full h-full object-cover transition-opacity duration-300"
+                >
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-end p-6">
+                  <div class="text-white">
+                    <span id="hero-banner-badge" class="text-[10px] tracking-widest uppercase font-semibold text-[#E6C280]">Öne Çıkan Model</span>
+                    <h3 id="hero-banner-title" class="font-serif-luxury text-xl sm:text-2xl font-bold">Soleil Madalyon Kolye</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. REALISTIC VALUE PROPOSITIONS -->
+    <section class="py-10 border-b border-[#EFE8DD] bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          
+          <div class="flex items-start gap-3.5">
+            <div class="w-10 h-10 rounded-xl bg-[#FCFAF7] border border-[#EFE8DD] flex items-center justify-center text-[#A8823B] shrink-0">
+              <i data-lucide="sparkle" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-serif-luxury text-base font-semibold text-[#141413]" data-i18n="value_craft_title">Zarif Tasarımlar</h4>
+              <p class="text-xs text-[#383836] mt-0.5" data-i18n="value_craft_desc">Her kombine uyum sağlayan modern modeller.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5">
+            <div class="w-10 h-10 rounded-xl bg-[#FCFAF7] border border-[#EFE8DD] flex items-center justify-center text-[#A8823B] shrink-0">
+              <i data-lucide="gift" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-serif-luxury text-base font-semibold text-[#141413]" data-i18n="value_care_title">Özenli Paketleme</h4>
+              <p class="text-xs text-[#383836] mt-0.5" data-i18n="value_care_desc">Hasar görmeyecek şekilde korunaklı kutusunda teslim edilir.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5">
+            <div class="w-10 h-10 rounded-xl bg-[#FCFAF7] border border-[#EFE8DD] flex items-center justify-center text-[#A8823B] shrink-0">
+              <i data-lucide="truck" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-serif-luxury text-base font-semibold text-[#141413]" data-i18n="value_shipping_title">Hızlı Gönderim</h4>
+              <p class="text-xs text-[#383836] mt-0.5" data-i18n="value_shipping_desc">Siparişiniz en kısa sürede kargoya teslim edilir.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5">
+            <div class="w-10 h-10 rounded-xl bg-[#FCFAF7] border border-[#EFE8DD] flex items-center justify-center text-[#A8823B] shrink-0">
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-serif-luxury text-base font-semibold text-[#141413]" data-i18n="value_box_title">Güvenli Alışveriş</h4>
+              <p class="text-xs text-[#383836] mt-0.5" data-i18n="value_box_desc">256-Bit SSL korumasıyla güvenli sipariş.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. MAIN PRODUCT CATALOG -->
+    <section id="koleksiyon" class="py-14 sm:py-18">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <span class="text-xs font-semibold tracking-widest text-[#A8823B] uppercase">moderntaki.co Koleksiyonu</span>
+          <h2 class="font-serif-luxury text-3xl sm:text-4xl text-[#141413] mt-2 mb-2 font-normal">
+            Tarzınıza Uygun Modeller
+          </h2>
+          <p class="text-xs sm:text-sm text-[#383836] font-light">
+            Beğendiğiniz modelleri seçin, `+` / `-` butonlarıyla istediğiniz adette sepete ekleyin.
+          </p>
+        </div>
+
+        <!-- Filter Pills & Sorting -->
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 pb-4 border-b border-[#EFE8DD]">
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="App.setCategory('all')" data-cat="all" class="cat-pill px-4 py-2 rounded-full border border-[#141413] bg-[#141413] text-white text-xs font-semibold transition-all">
+              Tümü
+            </button>
+            <button onclick="App.setCategory('kolye')" data-cat="kolye" class="cat-pill px-4 py-2 rounded-full border border-[#EFE8DD] bg-white text-[#383836] hover:border-[#141413] text-xs font-semibold transition-all">
+              Kolyeler
+            </button>
+            <button onclick="App.setCategory('yuzuk')" data-cat="yuzuk" class="cat-pill px-4 py-2 rounded-full border border-[#EFE8DD] bg-white text-[#383836] hover:border-[#141413] text-xs font-semibold transition-all">
+              Yüzükler
+            </button>
+            <button onclick="App.setCategory('bileklik')" data-cat="bileklik" class="cat-pill px-4 py-2 rounded-full border border-[#EFE8DD] bg-white text-[#383836] hover:border-[#141413] text-xs font-semibold transition-all">
+              Bileklikler
+            </button>
+            <button onclick="App.setCategory('kupe')" data-cat="kupe" class="cat-pill px-4 py-2 rounded-full border border-[#EFE8DD] bg-white text-[#383836] hover:border-[#141413] text-xs font-semibold transition-all">
+              Küpeler
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+            <span class="text-xs text-neutral-500 hidden sm:inline">Sırala:</span>
+            <select id="sort-select" class="px-4 py-2 rounded-full bg-white border border-[#EFE8DD] text-xs font-medium text-[#141413] focus:outline-none focus:border-[#C5A059]">
+              <option value="popular">En Çok Tercih Edilenler</option>
+              <option value="newest">En Yeniler</option>
+              <option value="price_asc">Fiyat: Düşükten Yükseğe</option>
+              <option value="price_desc">Fiyat: Yüksekten Düşüğe</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Injected dynamically -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6. SOCIAL MEDIA (minimal) -->
+    <section id="sosyal-medya" class="py-10 bg-[#FCFAF7] border-t border-[#EFE8DD]">
+      <div class="max-w-3xl mx-auto px-4 text-center">
+        <p class="text-[11px] uppercase tracking-[0.25em] text-[#A8823B] mb-4" data-i18n="social_section_title">Bizi Takip Edin</p>
+        <div class="flex items-center justify-center gap-4">
+          <a href="https://www.instagram.com/moderntaki.co" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" class="w-12 h-12 rounded-full border border-[#D9CDB8] text-[#141413] hover:bg-[#141413] hover:text-[#E6C280] hover:border-[#141413] flex items-center justify-center transition-colors">
+            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/@moderntakiciniz" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok" class="w-12 h-12 rounded-full border border-[#D9CDB8] text-[#141413] hover:bg-[#141413] hover:text-[#E6C280] hover:border-[#141413] flex items-center justify-center transition-colors">
+            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+          </a>
+          <a href="https://youtube.com/@moderntakiciniz" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube" class="w-12 h-12 rounded-full border border-[#D9CDB8] text-[#141413] hover:bg-[#141413] hover:text-[#E6C280] hover:border-[#141413] flex items-center justify-center transition-colors">
+            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
+        <p class="mt-4 text-[11px] text-[#383836]/60">@moderntaki.co · @moderntakiciniz</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 7. CLEAN CUSTOMER FOOTER (Zero admin links!) -->
+  <footer class="bg-white border-t border-[#EFE8DD] text-[#383836] text-xs pt-12 pb-20 sm:pb-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+        
+        <div>
+          <span class="font-serif-luxury text-2xl font-bold tracking-tight text-[#141413] flex items-center gap-1 mb-2">
+            ModernTakı
+            <span class="text-[10px] font-sans font-semibold px-1.5 py-0.5 rounded bg-[#141413] text-[#E6C280]">.co</span>
+          </span>
+          <p class="text-neutral-500 leading-relaxed font-light mb-4">
+            Tarzınızı yansıtan modern, şık ve kaliteli takı modelleri moderntaki.co'da.
+          </p>
+          <div class="flex items-center gap-3">
+            <a href="https://www.instagram.com/moderntaki.co" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full bg-[#FCFAF7] border border-[#EFE8DD] flex items-center justify-center text-[#141413] hover:text-[#C5A059] transition-colors" title="Instagram">
+              <i data-lucide="instagram" class="w-4 h-4"></i>
+            </a>
+            <a href="https://www.tiktok.com/@moderntakiciniz" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full bg-[#FCFAF7] border border-[#EFE8DD] flex items-center justify-center text-[#141413] hover:text-[#C5A059] transition-colors" title="TikTok">
+              <i data-lucide="tiktok" class="w-4 h-4"></i>
+            </a>
+            <a href="https://youtube.com/@moderntakiciniz" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full bg-[#FCFAF7] border border-[#EFE8DD] flex items-center justify-center text-[#141413] hover:text-[#C5A059] transition-colors" title="YouTube">
+              <i data-lucide="youtube" class="w-4 h-4"></i>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-serif-luxury text-base font-semibold text-[#141413] mb-3">Koleksiyonlar</h4>
+          <ul class="space-y-2">
+            <li><a href="#koleksiyon" onclick="App.setCategory('kolye')" class="hover:text-[#A8823B]">Kolyeler</a></li>
+            <li><a href="#koleksiyon" onclick="App.setCategory('yuzuk')" class="hover:text-[#A8823B]">Yüzükler</a></li>
+            <li><a href="#koleksiyon" onclick="App.setCategory('bileklik')" class="hover:text-[#A8823B]">Bileklikler</a></li>
+            <li><a href="#koleksiyon" onclick="App.setCategory('kupe')" class="hover:text-[#A8823B]">Küpeler</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-serif-luxury text-base font-semibold text-[#141413] mb-3">Müşteri Hizmetleri</h4>
+          <ul class="space-y-2">
+            <li><a href="https://ig.me/m/moderntaki.co" target="_blank" class="hover:text-[#A8823B] flex items-center gap-1.5 transition-colors"><i data-lucide="instagram" class="w-3.5 h-3.5 text-[#C5A059]"></i><span>Instagram DM Destek</span></a></li>
+            <li><a href="#" onclick="App.toggleChatAssistant(); return false;" class="hover:text-[#A8823B] flex items-center gap-1.5 transition-colors"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#C5A059]"></i><span>Canlı Stil Asistanı</span></a></li>
+            <li><a href="#koleksiyon" class="hover:text-[#A8823B] transition-colors">Tüm Koleksiyonlar</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-serif-luxury text-base font-semibold text-[#141413] mb-3">Güvenlik & Hukuk</h4>
+          <ul class="space-y-2">
+            <li><a href="#" onclick="App.openPolicyModal('mesafeli'); return false;" class="hover:text-[#A8823B] transition-colors">Mesafeli Satış Sözleşmesi</a></li>
+            <li><a href="#" onclick="App.openPolicyModal('on-bilgi'); return false;" class="hover:text-[#A8823B] transition-colors">Ön Bilgilendirme Formu</a></li>
+            <li><a href="#" onclick="App.openPolicyModal('iade'); return false;" class="hover:text-[#A8823B] transition-colors">İptal ve İade Koşulları</a></li>
+            <li><a href="#" onclick="App.openPolicyModal('kvkk'); return false;" class="hover:text-[#A8823B] transition-colors">KVKK & Gizlilik Politikası</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Footer Bottom (Clean, trustworthy, zero admin cues) -->
+      <div class="pt-6 border-t border-[#EFE8DD] flex flex-col sm:flex-row items-center justify-between gap-3 text-neutral-400 text-[11px]">
+        <p>© 2026 moderntaki.co - Tüm hakları saklıdır.</p>
+        <div class="flex items-center gap-4 text-neutral-500">
+          <span>Visa</span>
+          <span>•</span>
+          <span>Mastercard</span>
+          <span>•</span>
+          <span>Troy</span>
+          <span>•</span>
+          <span>256-Bit SSL Güvenli Ödeme</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MOBILE STICKY BOTTOM NAV -->
+  <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#EFE8DD] px-4 py-2 flex items-center justify-around text-[10px] text-[#383836]">
+    <a href="#" class="flex flex-col items-center gap-1 hover:text-[#A8823B]">
+      <i data-lucide="home" class="w-4 h-4"></i>
+      <span>Ana Sayfa</span>
+    </a>
+    <a href="#koleksiyon" class="flex flex-col items-center gap-1 hover:text-[#A8823B]">
+      <i data-lucide="compass" class="w-4 h-4"></i>
+      <span>Keşfet</span>
+    </a>
+    <button onclick="App.openWishlistModal()" class="flex flex-col items-center gap-1 relative hover:text-[#A8823B]">
+      <i data-lucide="heart" class="w-4 h-4"></i>
+      <span>Favoriler</span>
+      <span class="wishlist-counter hidden absolute -top-1 right-2 w-4 h-4 rounded-full bg-[#141413] text-white text-[9px] flex items-center justify-center">0</span>
+    </button>
+    <button onclick="App.openCartDrawer()" class="flex flex-col items-center gap-1 relative hover:text-[#A8823B]">
+      <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+      <span>Sepet</span>
+      <span class="cart-counter hidden absolute -top-1 right-1 w-4 h-4 rounded-full bg-[#C5A059] text-white text-[9px] flex items-center justify-center">0</span>
+    </button>
+    <button onclick="App.openAuthModal('login')" class="flex flex-col items-center gap-1 hover:text-[#A8823B]">
+      <i data-lucide="user" class="w-4 h-4"></i>
+      <span>Profil</span>
+    </button>
+  </nav>
+
+  <!-- ======================================================================= -->
+  <!-- CUSTOMER MODALS (Cart, Customer Login, Checkout, Quick View) -->
+  <!-- ======================================================================= -->
+
+  <!-- A. CART DRAWER (with +/- stepper) -->
+  <div id="cart-backdrop" onclick="App.closeCartDrawer()" class="hidden fixed inset-0 z-50 bg-black/40 modal-backdrop-blur opacity-0 transition-opacity duration-300"></div>
+  <aside id="cart-drawer" class="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-white shadow-2xl translate-x-full drawer-transition flex flex-col">
+    <div class="p-5 border-b border-[#EFE8DD] flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i data-lucide="shopping-bag" class="w-5 h-5 text-[#A8823B]"></i>
+        <h3 class="font-serif-luxury text-xl font-semibold text-[#141413]" data-i18n="cart_title">Alışveriş Sepetiniz</h3>
+      </div>
+      <button onclick="App.closeCartDrawer()" class="p-1 rounded-full text-neutral-400 hover:text-[#141413]">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <!-- Free shipping progress bar -->
+    <div id="cart-shipping-progress" class="bg-[#F8F5F0] border-b border-[#EFE8DD] px-5 py-2.5 text-xs">
+      <div class="flex items-center justify-between text-[11px] font-medium text-[#141413] mb-1.5">
+        <span id="cart-shipping-msg">500 ₺ üzeri alışverişlerde kargo ücretsiz!</span>
+        <span id="cart-shipping-status" class="font-bold text-[#A8823B]"></span>
+      </div>
+      <div class="w-full bg-[#EFE8DD] h-1.5 rounded-full overflow-hidden">
+        <div id="cart-shipping-bar" class="bg-gradient-to-r from-[#C5A059] to-[#E6C280] h-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div id="cart-items-list" class="flex-1 overflow-y-auto p-5 space-y-3"></div>
+
+    <div id="cart-footer" class="p-5 border-t border-[#EFE8DD] bg-[#FCFAF7]">
+      <div class="flex items-center justify-between text-xs text-[#383836] mb-1.5">
+        <span data-i18n="cart_subtotal">Ara Toplam:</span>
+        <span id="cart-subtotal-val" class="font-semibold text-[#141413]">0 ₺</span>
+      </div>
+      <div class="flex items-center justify-between text-xs text-[#383836] mb-2">
+        <span>Kargo Ücreti:</span>
+        <span id="cart-shipping-val" class="font-semibold text-emerald-700">Ücretsiz</span>
+      </div>
+      <div class="flex items-center justify-between text-base font-bold text-[#141413] pt-2 border-t border-[#EFE8DD] mb-4">
+        <span>Genel Toplam:</span>
+        <span id="cart-total-val" class="text-lg text-[#141413]">0 ₺</span>
+      </div>
+
+      <button onclick="App.startCheckout()" class="w-full py-3.5 rounded-xl bg-[#141413] hover:bg-[#A8823B] text-white text-xs font-semibold tracking-widest uppercase transition-all shadow-md active:scale-98 flex items-center justify-center gap-2">
+        <i data-lucide="lock" class="w-3.5 h-3.5 text-[#E6C280]"></i>
+        <span data-i18n="cart_checkout_btn">Siparişi Tamamla</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- B. AUTH MODAL (Müşteri Girişi / Kayıt Ol) -->
+  <div id="auth-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 modal-backdrop-blur">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 border border-[#EFE8DD] shadow-2xl relative">
+      <button onclick="App.closeAuthModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-[#141413]">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex border-b border-[#EFE8DD] mb-6">
+        <button id="tab-login-btn" onclick="App.setAuthMode('login')" class="flex-1 pb-3 text-sm border-b-2 border-[#C5A059] text-[#141413] font-bold">
+          Giriş Yap
+        </button>
+        <button id="tab-register-btn" onclick="App.setAuthMode('register')" class="flex-1 pb-3 text-sm border-b-2 border-transparent text-neutral-400">
+          Kayıt Ol
+        </button>
+      </div>
+
+      <div class="mb-5 p-3 rounded-xl bg-[#FCFAF7] border border-[#EFE8DD] flex items-center justify-between">
+        <div class="text-xs">
+          <p class="font-bold text-[#141413]">Hızlı Test Hesabı</p>
+          <p class="text-[11px] text-neutral-500">demo@moderntaki.co</p>
+        </div>
+        <button onclick="App.loginDemoAccount()" class="px-3 py-1.5 rounded-lg bg-[#141413] text-[#E6C280] text-xs font-semibold hover:bg-[#A8823B] hover:text-white transition-colors">
+          Tek Tıkla Giriş
+        </button>
+      </div>
+
+      <div id="login-form-box">
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-[#141413] mb-1">E-Posta Adresiniz</label>
+            <input type="email" id="login-email" required class="w-full px-4 py-2.5 rounded-xl border border-[#EFE8DD] text-xs focus:outline-none focus:border-[#C5A059]">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[#141413] mb-1">Şifreniz</label>
+            <input type="password" id="login-password" required class="w-full px-4 py-2.5 rounded-xl border border-[#EFE8DD] text-xs focus:outline-none focus:border-[#C5A059]">
+          </div>
+          <button type="submit" class="w-full py-3 rounded-xl bg-[#141413] hover:bg-[#A8823B] text-white text-xs font-semibold tracking-wider uppercase transition-colors shadow">
+            Giriş Yap
+          </button>
+        </form>
+      </div>
+
+      <div id="register-form-box" class="hidden">
+        <form id="register-form" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-[#141413] mb-1">Adınız Soyadınız *</label>
+            <input type="text" id="reg-name" required class="w-full px-4 py-2 rounded-xl border border-[#EFE8DD] text-xs focus:outline-none focus:border-[#C5A059]">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[#141413] mb-1">E-Posta Adresiniz *</label>
+            <input type="email" id="reg-email" required class="w-full px-4 py-2 rounded-xl border border-[#EFE8DD] text-xs focus:outline-none focus:border-[#C5A059]">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[#141413] mb-1">Telefon</label>
+            <input type="tel" id="reg-phone" placeholder="05XX XXX XX XX" class="w-full px-4 py-2 rounded-xl border border-[#EFE8DD] text-xs focus:outline-none focus:border-[#C5A059]">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[#141413] mb-1">Şifre *</label>
+            <input type="password" id="reg-password" required class="w-full px-4 py-2 rounded-xl border border-[#EFE8DD] text-xs focus:outline-none focus:border-[#C5A059]">
+          </div>
+          <button type="submit" class="w-full py-3 rounded-xl bg-[#141413] hover:bg-[#A8823B] text-white text-xs font-semibold tracking-wider uppercase transition-colors shadow">
+            Kayıt Ol
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- C. CHECKOUT MODAL -->
+  <div id="checkout-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 modal-backdrop-blur overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 border border-[#EFE8DD] shadow-2xl relative my-8">
+      <button onclick="App.closeCheckoutModal()" class="absolute top-5 right-5 text-neutral-400 hover:text-[#141413]">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-2 mb-6">
+        <i data-lucide="shield-check" class="w-6 h-6 text-[#A8823B]"></i>
+        <h3 class="font-serif-luxury text-2xl font-semibold text-[#141413]">Sipariş Bilgileri</h3>
+      </div>
+
+      <form id="checkout-form" class="space-y-6">
+        <div class="p-4 rounded-xl bg-[#FCFAF7] border border-[#EFE8DD]">
+          <h4 class="font-semibold text-xs text-[#141413] uppercase tracking-wider mb-3">1. Teslimat Adresi</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="block font-medium mb-1">Ad Soyad *</label>
+              <input type="text" id="checkout-fullname" required class="w-full px-3.5 py-2 rounded-lg border border-[#EFE8DD] bg-white">
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Telefon *</label>
+              <input type="tel" id="checkout-phone" required class="w-full px-3.5 py-2 rounded-lg border border-[#EFE8DD] bg-white">
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Şehir *</label>
+              <input type="text" id="checkout-city" required class="w-full px-3.5 py-2 rounded-lg border border-[#EFE8DD] bg-white">
+            </div>
+            <div>
+              <label class="block font-medium mb-1">E-Posta</label>
+              <input type="email" id="checkout-email" class="w-full px-3.5 py-2 rounded-lg border border-[#EFE8DD] bg-white">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block font-medium mb-1">Açık Adres *</label>
+              <textarea id="checkout-address" rows="2" required class="w-full px-3.5 py-2 rounded-lg border border-[#EFE8DD] bg-white"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-[#FCFAF7] border border-[#EFE8DD]">
+          <h4 class="font-semibold text-xs text-[#141413] uppercase tracking-wider mb-3">2. Ödeme Yöntemi</h4>
+          <div class="space-y-2 text-xs">
+            <label class="flex items-center gap-3 p-3 rounded-lg border border-[#C5A059] bg-white cursor-pointer hover:border-[#A8823B] transition-colors">
+              <input type="radio" name="paymentMethod" value="Havale / EFT ile Ödeme" checked class="text-[#C5A059]">
+              <div class="flex-1">
+                <span class="font-bold text-[#141413] block">Banka Havalesi / FAST / EFT</span>
+                <span class="text-[11px] text-neutral-500">Sipariş sonrasında IBAN bilgileri iletilir</span>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">Hızlı Onay</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 rounded-lg border border-[#EFE8DD] bg-white cursor-pointer hover:border-[#A8823B] transition-colors">
+              <input type="radio" name="paymentMethod" value="Instagram DM ile Doğrudan Sipariş" class="text-[#C5A059]">
+              <div class="flex-1">
+                <span class="font-medium text-[#141413] block">Instagram DM ile Sipariş (@moderntaki.co)</span>
+                <span class="text-[11px] text-neutral-500">Müşteri temsilcimiz ile anında teyit</span>
+              </div>
+              <i data-lucide="instagram" class="w-4 h-4 text-[#E1306C]"></i>
+            </label>
+            <label class="flex items-center gap-3 p-3 rounded-lg border border-[#EFE8DD] bg-neutral-50 opacity-70 cursor-not-allowed">
+              <input type="radio" name="paymentMethod" value="Kredi Kartı (Pek Yakında)" disabled class="text-neutral-400">
+              <div class="flex-1">
+                <span class="font-medium text-neutral-600 block">Kredi / Banka Kartı (3D Secure)</span>
+                <span class="text-[10px] text-neutral-400">Güvenli altyapı hazırlığı sürüyor • Pek Yakında</span>
+              </div>
+              <i data-lucide="lock" class="w-3.5 h-3.5 text-neutral-400"></i>
+            </label>
+          </div>
+        </div>
+
+        <div class="border-t border-[#EFE8DD] pt-4">
+          <div id="checkout-items-summary" class="mb-3 space-y-1"></div>
+          
+          <div class="space-y-1.5 py-2 border-t border-[#EFE8DD] text-xs">
+            <div class="flex items-center justify-between text-[#383836]">
+              <span>Ara Toplam:</span>
+              <span id="checkout-subtotal" class="font-semibold text-[#141413]">0 ₺</span>
+            </div>
+            <div class="flex items-center justify-between text-[#383836]">
+              <span>Kargo Ücreti:</span>
+              <span id="checkout-shipping" class="font-semibold text-emerald-700">Ücretsiz</span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-base font-bold text-[#141413] pt-2 border-t border-[#EFE8DD] mb-4">
+            <span>Toplam Tutar:</span>
+            <span id="checkout-final-total" class="text-xl text-[#A8823B]">0 ₺</span>
+          </div>
+
+          <label class="flex items-start gap-2.5 text-[11px] text-neutral-600 mb-5 cursor-pointer select-none">
+            <input type="checkbox" id="checkout-terms-cb" required class="mt-0.5 rounded text-[#C5A059] focus:ring-[#C5A059]">
+            <span>
+              <a href="#" onclick="App.openPolicyModal('mesafeli'); return false;" class="text-[#A8823B] underline font-semibold">Mesafeli Satış Sözleşmesi</a> ve 
+              <a href="#" onclick="App.openPolicyModal('on-bilgi'); return false;" class="text-[#A8823B] underline font-semibold">Ön Bilgilendirme Formu</a>'nu okudum, onaylıyorum.
+            </span>
+          </label>
+
+          <button type="submit" class="w-full py-4 rounded-xl bg-[#141413] hover:bg-[#A8823B] text-white text-xs font-semibold tracking-widest uppercase transition-all shadow-xl active:scale-98 flex items-center justify-center gap-2">
+            <i data-lucide="check-circle" class="w-4 h-4 text-[#E6C280]"></i>
+            <span>Siparişi Tamamla</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- D. ORDER SUCCESS CONFIRMATION MODAL -->
+  <div id="order-success-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 modal-backdrop-blur">
+    <div class="bg-white rounded-3xl max-w-md w-full p-8 border border-[#EFE8DD] shadow-2xl text-center relative">
+      <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="check" class="w-8 h-8"></i>
+      </div>
+      <h3 class="font-serif-luxury text-2xl font-bold text-[#141413] mb-2" data-i18n="order_success_title">Siparişiniz Alındı!</h3>
+      <p class="text-xs text-neutral-600 mb-6" data-i18n="order_success_desc">
+        Siparişiniz hazırlanıp kargoya teslim edilmek üzere işleme alındı.
+      </p>
+
+      <div class="p-4 rounded-2xl bg-[#FCFAF7] border border-[#EFE8DD] text-xs text-left mb-6 space-y-2">
+        <div class="flex justify-between">
+          <span class="text-neutral-500">Sipariş Numarası:</span>
+          <span id="success-order-number" class="font-bold text-[#141413]">#MT-000000</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-neutral-500">Toplam Tutar:</span>
+          <span id="success-order-total" class="font-bold text-[#A8823B]">0 ₺</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-neutral-500">Ödeme Şekli:</span>
+          <span id="success-order-payment" class="font-medium text-[#141413]">-</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <a id="ig-order-btn" href="https://ig.me/m/moderntaki.co" target="_blank" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] hover:brightness-110 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md">
+          <i data-lucide="instagram" class="w-4 h-4"></i>
+          <span>Instagram DM'den Siparişini Bildir (@moderntaki.co)</span>
+        </a>
+        <button onclick="App.closeOrderSuccessModal()" class="w-full py-3 rounded-xl bg-[#141413] text-white text-xs font-semibold hover:bg-[#A8823B] transition-colors">
+          Alışverişe Devam Et
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- E. WISHLIST MODAL -->
+  <div id="wishlist-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 modal-backdrop-blur">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 border border-[#EFE8DD] shadow-2xl relative">
+      <button onclick="App.closeWishlistModal()" class="absolute top-5 right-5 text-neutral-400 hover:text-[#141413]">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-2 mb-4">
+        <i data-lucide="heart" class="w-5 h-5 text-red-500 fill-red-500"></i>
+        <h3 class="font-serif-luxury text-2xl font-semibold text-[#141413]" data-i18n="wishlist_title">Favorilerim</h3>
+      </div>
+
+      <div id="wishlist-items-container" class="max-h-80 overflow-y-auto space-y-3 mb-6"></div>
+
+      <div class="pt-4 border-t border-[#EFE8DD] flex items-center justify-between">
+        <button onclick="App.closeWishlistModal()" class="text-xs text-neutral-500 hover:text-[#141413]">Kapat</button>
+        <button onclick="App.addAllWishlistToCart()" class="px-5 py-2.5 rounded-xl bg-[#141413] hover:bg-[#A8823B] text-white text-xs font-semibold tracking-wider transition-colors">
+          Tümünü Sepete Ekle
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- F. QUICK VIEW MODAL -->
+  <div id="quick-view-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 modal-backdrop-blur overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 border border-[#EFE8DD] shadow-2xl relative my-8">
+      <button onclick="App.closeQuickView()" class="absolute top-5 right-5 text-neutral-400 hover:text-[#141413] z-10">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <div>
+          <div class="aspect-square rounded-2xl overflow-hidden bg-[#F7F3ED] border border-[#EFE8DD] mb-3">
+            <img id="qv-main-image" src="" alt="" class="w-full h-full object-cover">
+          </div>
+          <div id="qv-thumbs-container" class="flex gap-2"></div>
+        </div>
+
+        <div class="flex flex-col">
+          <span id="qv-category" class="text-[10px] font-bold tracking-widest text-[#A8823B] uppercase mb-1">KOLYE</span>
+          <h2 id="qv-title" class="font-serif-luxury text-2xl font-semibold text-[#141413] mb-2 leading-snug">Ürün</h2>
+          
+          <div class="flex items-baseline gap-3 mb-4">
+            <span id="qv-price" class="text-xl font-bold text-[#141413]">0 ₺</span>
+            <span id="qv-original-price" class="text-xs text-neutral-400 line-through hidden">0 ₺</span>
+            <div id="qv-stock-status" class="ml-auto"></div>
+          </div>
+
+          <p id="qv-desc" class="text-xs text-[#383836] font-light leading-relaxed mb-6">Açıklama</p>
+
+          <div class="mb-4">
+            <label class="block text-xs font-semibold text-[#141413] mb-2" data-i18n="size">Ölçü / Boyut</label>
+            <div id="qv-sizes-container" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <div class="mb-6">
+            <label class="block text-xs font-semibold text-[#141413] mb-2" data-i18n="material">Maden / Renk</label>
+            <div id="qv-materials-container" class="flex items-center gap-4"></div>
+          </div>
+
+          <!-- Stepper (+ / -) & Add to Cart -->
+          <div class="flex items-center gap-3 pt-4 border-t border-[#EFE8DD] mb-8">
+            <div class="flex items-center border border-[#EFE8DD] rounded-xl bg-[#FCFAF7] p-1.5">
+              <button onclick="App.changeQuickViewQty(-1)" class="w-8 h-8 rounded-lg flex items-center justify-center text-[#141413] hover:bg-[#EFE8DD] transition-colors">
+                <i data-lucide="minus" class="w-4 h-4"></i>
+              </button>
+              <span id="qv-stepper-val" class="w-10 text-center text-sm font-bold text-[#141413]">1</span>
+              <button onclick="App.changeQuickViewQty(1)" class="w-8 h-8 rounded-lg flex items-center justify-center text-[#141413] hover:bg-[#EFE8DD] transition-colors">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <button onclick="App.addQuickViewToCart()" class="flex-1 py-3.5 px-6 rounded-xl bg-[#141413] hover:bg-[#A8823B] text-white text-xs font-semibold tracking-wider uppercase transition-all shadow-md active:scale-98 flex items-center justify-center gap-2">
+              <i data-lucide="shopping-bag" class="w-4 h-4 text-[#E6C280]"></i>
+              <span data-i18n="add_to_cart">Sepete Ekle</span>
+            </button>
+          </div>
+
+          <!-- Kombini Tamamlayan Parçalar -->
+          <div>
+            <h4 class="font-serif-luxury text-base font-semibold text-[#141413] mb-2" data-i18n="related_products_title">Kombini Tamamlayan Parçalar</h4>
+            <div id="qv-related-container" class="space-y-2"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- G. LEGAL / POLICY MODAL (Mesafeli Satış, Ön Bilgi, İade, KVKK) -->
+  <div id="policy-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 modal-backdrop-blur">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 border border-[#EFE8DD] shadow-2xl relative max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between pb-4 border-b border-[#EFE8DD]">
+        <div class="flex items-center gap-2">
+          <i data-lucide="shield-check" class="w-5 h-5 text-[#C5A059]"></i>
+          <h3 id="policy-modal-title" class="font-serif-luxury text-xl font-bold text-[#141413]">Hukuki Metin</h3>
+        </div>
+        <button onclick="App.closePolicyModal()" class="p-1 rounded-full text-neutral-400 hover:text-[#141413]">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="policy-modal-content" class="flex-1 overflow-y-auto py-5 text-xs text-neutral-700 leading-relaxed space-y-4 pr-3 scrollbar-thin">
+      </div>
+      <div class="pt-4 border-t border-[#EFE8DD] flex items-center justify-between">
+        <span class="text-[11px] text-neutral-400">ModernTakı • Güvenli ve Şeffaf Alışveriş</span>
+        <button onclick="App.closePolicyModal()" class="px-6 py-2.5 rounded-xl bg-[#141413] hover:bg-[#A8823B] text-white text-xs font-semibold transition-colors">
+          Anladım, Kapat
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- H. FLOATING LUXURY CHAT ASSISTANT (Instagram DM & Concierge Widget) -->
+  <!-- ======================================================================= -->
+  <div id="chat-widget-container" class="fixed bottom-20 lg:bottom-6 right-5 z-40">
+    
+    <!-- Floating Trigger Button -->
+    <button 
+      id="chat-toggle-btn" 
+      onclick="App.toggleChatAssistant()" 
+      class="group relative w-14 h-14 rounded-full bg-gradient-to-tr from-[#141413] via-[#242422] to-[#141413] text-[#E6C280] border border-[#C5A059]/60 shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
+      aria-label="ModernTakı Canlı Destek"
+    >
+      <i data-lucide="sparkles" class="w-6 h-6 transition-transform group-hover:rotate-12"></i>
+      <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#C5A059] text-[#141413] text-[9px] font-bold flex items-center justify-center animate-pulse">1</span>
+    </button>
+
+    <!-- Chat Window Card -->
+    <div 
+      id="chat-window-card" 
+      class="hidden absolute bottom-16 right-0 w-[330px] sm:w-[360px] max-w-[calc(100vw-2.5rem)] bg-white rounded-3xl shadow-2xl border border-[#EFE8DD] overflow-hidden flex flex-col transition-all duration-300 transform origin-bottom-right"
+      style="max-height: 520px;"
+    >
+      <!-- Chat Header -->
+      <div class="bg-gradient-to-r from-[#141413] to-[#242422] p-4 text-white flex items-center justify-between border-b border-[#C5A059]/40">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-[#C5A059] text-[#141413] flex items-center justify-center font-bold font-serif-luxury text-sm">
+            MT
+          </div>
+          <div>
+            <h4 class="font-serif-luxury text-sm font-bold text-white flex items-center gap-1.5">
+              <span>ModernTakı Asistanı</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            </h4>
+            <p class="text-[10px] text-neutral-300">Online • Anında Yanıt</p>
+          </div>
+        </div>
+        <button onclick="App.toggleChatAssistant()" class="p-1 rounded-full text-neutral-400 hover:text-white transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Messages Body -->
+      <div id="chat-messages-body" class="flex-1 overflow-y-auto p-4 space-y-3 text-xs bg-[#FCFAF7] max-h-[340px] scrollbar-thin">
+        
+        <!-- Bot Greeting -->
+        <div class="flex items-start gap-2.5">
+          <div class="w-6 h-6 rounded-full bg-[#141413] text-[#E6C280] flex items-center justify-center text-[10px] shrink-0 font-serif-luxury mt-0.5">
+            MT
+          </div>
+          <div class="bg-white p-3 rounded-2xl rounded-tl-sm border border-[#EFE8DD] shadow-sm text-neutral-700 leading-relaxed max-w-[85%]">
+            Merhaba! ✨ <strong>ModernTakı</strong> stil asistanınıza hoş geldiniz. Takılarımız, ölçüler veya siparişiniz hakkında size nasıl yardımcı olabilirim?
+          </div>
+        </div>
+
+        <!-- Quick Question Chips -->
+        <div id="chat-quick-chips" class="pl-8 space-y-1.5">
+          <p class="text-[10px] text-neutral-400 font-semibold uppercase tracking-wider">Hızlı Sorular:</p>
+          <div class="flex flex-col gap-1.5">
+            <button onclick="App.handleQuickQuestion('olcu')" class="text-left px-3 py-2 rounded-xl bg-white hover:bg-[#F3EFEA] border border-[#EFE8DD] text-[#141413] font-medium transition-colors flex items-center justify-between text-[11px]">
+              <span>📏 Yüzük & Kolye ölçüsü nasıl bulunur?</span>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-neutral-400"></i>
+            </button>
+            <button onclick="App.handleQuickQuestion('kararma')" class="text-left px-3 py-2 rounded-xl bg-white hover:bg-[#F3EFEA] border border-[#EFE8DD] text-[#141413] font-medium transition-colors flex items-center justify-between text-[11px]">
+              <span>💧 Takılar kararır mı / Suya dayanıklı mı?</span>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-neutral-400"></i>
+            </button>
+            <button onclick="App.handleQuickQuestion('kargo')" class="text-left px-3 py-2 rounded-xl bg-white hover:bg-[#F3EFEA] border border-[#EFE8DD] text-[#141413] font-medium transition-colors flex items-center justify-between text-[11px]">
+              <span>🚚 Kargo ücreti ve teslimat süresi</span>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-neutral-400"></i>
+            </button>
+            <a href="https://ig.me/m/moderntaki.co" target="_blank" class="text-left px-3 py-2 rounded-xl bg-gradient-to-r from-[#833ab4]/10 via-[#fd1d1d]/10 to-[#fcb045]/10 hover:from-[#833ab4]/20 hover:to-[#fcb045]/20 border border-pink-200 text-[#141413] font-semibold transition-all flex items-center justify-between text-[11px]">
+              <span class="flex items-center gap-1.5">
+                <i data-lucide="instagram" class="w-3.5 h-3.5 text-[#E1306C]"></i>
+                <span>Instagram DM'den Bize Yazın (@moderntaki.co)</span>
+              </span>
+              <i data-lucide="external-link" class="w-3.5 h-3.5 text-neutral-400"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Chat Input Area -->
+      <form id="chat-input-form" onsubmit="App.handleChatUserSubmit(event)" class="p-3 bg-white border-t border-[#EFE8DD] flex items-center gap-2">
+        <input 
+          type="text" 
+          id="chat-user-input" 
+          placeholder="Sormak istediğinizi yazın..." 
+          class="flex-1 px-3.5 py-2.5 rounded-xl bg-[#FCFAF7] border border-[#EFE8DD] text-xs focus:outline-none focus:border-[#C5A059]"
+        >
+        <button type="submit" class="p-2.5 rounded-xl bg-[#141413] hover:bg-[#C5A059] text-white hover:text-[#141413] transition-colors shrink-0">
+          <i data-lucide="send" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/products-data.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/translations.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

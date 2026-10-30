@@ -1,0 +1,114 @@
+/* ==========================================================================
+   ModernTakı (moderntaki.co) - Luxury Boutique Stylesheet
+   Crafted with artisanal care, zero generic AI template feel
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  --color-sand-50: #FCFAF7;
+  --color-sand-100: #F7F3ED;
+  --color-sand-200: #EFE8DD;
+  --color-gold-400: #D8B26E;
+  --color-gold-500: #C5A059;
+  --color-gold-600: #A8823B;
+  --color-noir-900: #141413;
+  --color-noir-800: #212120;
+  --color-noir-700: #383836;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-sand-50);
+  color: var(--color-noir-900);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-serif-luxury {
+  font-family: var(--font-serif);
+}
+
+/* Custom Luxury Gold Gradient */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #B8860B 0%, #E6C280 50%, #B8860B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #C5A059 0%, #E6C280 50%, #A8823B 100%);
+}
+
+.gold-border {
+  border-color: rgba(197, 160, 89, 0.35);
+}
+
+/* Subtle Shimmer for Badges */
+@keyframes subtle-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-badge {
+  background: linear-gradient(90deg, #F3ECE1 0%, #FFFFFF 50%, #F3ECE1 100%);
+  background-size: 200% 100%;
+  animation: subtle-shimmer 3.5s infinite ease-in-out;
+}
+
+/* Soft Image Hover Zoom */
+.product-card-img {
+  transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+}
+
+.product-card:hover .product-card-img {
+  transform: scale(1.05);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F7F3ED;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8B26E;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A8823B;
+}
+
+/* Backdrop Blur Modals */
+.modal-backdrop-blur {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Smooth Drawer Slide */
+.drawer-transition {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+}
+
+/* Stepper Input Styling */
+.stepper-btn {
+  transition: all 0.2s ease;
+}
+.stepper-btn:active {
+  transform: scale(0.92);
+}
+
+/* Pulse animation for live badge */
+@keyframes live-pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+.pulse-indicator {
+  animation: live-pulse 2s infinite ease-in-out;
+}
