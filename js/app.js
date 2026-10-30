@@ -657,20 +657,12 @@ const App = (() => {
     showToast("Ürün sepetten kaldırıldı.");
   };
 
-  // CHECKOUT WITH MANDATORY LOGIN
+  // CHECKOUT (Supports both Guest Checkout & Logged-in Customer)
   const startCheckout = () => {
-    const currentUser = DB.getCurrentUser();
     const cart = DB.getCart();
 
     if (cart.length === 0) {
       showToast("Sepetinizde ürün bulunmuyor!", "error");
-      return;
-    }
-
-    if (!currentUser) {
-      closeCartDrawer();
-      showToast(I18N.t('login_required_alert'), "error");
-      openAuthModal('login');
       return;
     }
 
@@ -684,6 +676,7 @@ const App = (() => {
 
     const currentUser = DB.getCurrentUser();
     const cart = DB.getCart();
+    const guestBadge = document.getElementById('checkout-guest-badge');
 
     if (currentUser) {
       const nameInput = document.getElementById('checkout-fullname');
@@ -695,8 +688,11 @@ const App = (() => {
       if (nameInput) nameInput.value = currentUser.name || '';
       if (emailInput) emailInput.value = currentUser.email || '';
       if (phoneInput) phoneInput.value = currentUser.phone || '';
-      if (cityInput) cityInput.value = currentUser.city || 'İstanbul';
-      if (addressInput) addressInput.value = currentUser.address || '';
+      if (cityInput && !cityInput.value) cityInput.value = currentUser.city || 'İstanbul';
+      if (addressInput && !addressInput.value) addressInput.value = currentUser.address || '';
+      if (guestBadge) guestBadge.textContent = `Üye: ${currentUser.name}`;
+    } else {
+      if (guestBadge) guestBadge.textContent = 'Üyeliksiz Hızlı Sipariş';
     }
 
     const summaryContainer = document.getElementById('checkout-items-summary');
@@ -751,18 +747,20 @@ const App = (() => {
 
     const fullName = document.getElementById('checkout-fullname')?.value;
     const phone = document.getElementById('checkout-phone')?.value;
+    const email = document.getElementById('checkout-email')?.value;
     const city = document.getElementById('checkout-city')?.value;
     const address = document.getElementById('checkout-address')?.value;
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'Kredi Kartı';
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'Havale / EFT ile Ödeme';
 
-    if (!fullName || !phone || !address) {
-      showToast("Lütfen tüm zorunlu adres alanlarını doldurun!", "error");
+    if (!fullName || !phone || !email || !address) {
+      showToast("Lütfen tüm zorunlu teslimat ve e-posta alanlarını doldurun!", "error");
       return;
     }
 
     const result = DB.createOrder({
       fullName,
       phone,
+      email,
       city,
       address,
       paymentMethod
@@ -873,15 +871,6 @@ const App = (() => {
       updateAuthUI();
     } else {
       showToast(result.message, "error");
-    }
-  };
-
-  const loginDemoAccount = () => {
-    const result = DB.login("demo@moderntaki.co", "123");
-    if (result.success) {
-      showToast(`Giriş yapıldı: ${result.user.name}`);
-      closeAuthModal();
-      updateAuthUI();
     }
   };
 
@@ -1350,7 +1339,6 @@ const App = (() => {
     openAuthModal,
     closeAuthModal,
     setAuthMode,
-    loginDemoAccount,
     handleLogout,
     openQuickView,
     closeQuickView,

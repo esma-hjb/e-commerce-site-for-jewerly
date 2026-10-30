@@ -246,18 +246,20 @@ const DB = (() => {
     }
   ];
 
-  const INITIAL_USERS = [
-    {
-      id: "usr-001",
-      name: "Elif Yılmaz",
-      email: "demo@moderntaki.co",
-      password: "123",
-      phone: "+90 532 555 12 34",
-      city: "İstanbul",
-      address: "Nişantaşı Mah. Teşvikiye Cad. No: 14, Şişli",
-      createdAt: "2026-01-15T10:00:00.000Z"
+  const INITIAL_USERS = [];
+
+  const hashPass = (email, pw) => {
+    const str = `mt_salt_2026:${String(email || '').trim().toLowerCase()}:${String(pw || '')}`;
+    let h1 = 0xdeadbeef ^ str.length, h2 = 0x41c6ce57 ^ str.length;
+    for (let i = 0, ch; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
     }
-  ];
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return 'sha_' + (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+  };
 
   // Helper storage operations
   const getItem = (key, fallback) => {
@@ -294,6 +296,13 @@ const DB = (() => {
     }
     if (!localStorage.getItem(STORAGE_KEYS.USERS)) {
       setItem(STORAGE_KEYS.USERS, INITIAL_USERS);
+    } else {
+      const existingUsers = getItem(STORAGE_KEYS.USERS, []).filter(u => u && u.email !== 'demo@moderntaki.co');
+      setItem(STORAGE_KEYS.USERS, existingUsers);
+      const cur = getItem(STORAGE_KEYS.CURRENT_USER, null);
+      if (cur && cur.email === 'demo@moderntaki.co') {
+        localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      }
     }
     if (!localStorage.getItem(STORAGE_KEYS.CART)) {
       setItem(STORAGE_KEYS.CART, []);
@@ -421,11 +430,14 @@ const DB = (() => {
     getCurrentUser: () => getItem(STORAGE_KEYS.CURRENT_USER, null),
 
     login: (email, password) => {
+      const cleanEmail = String(email || '').trim().toLowerCase();
+      const hashed = hashPass(cleanEmail, password);
       const users = getItem(STORAGE_KEYS.USERS, INITIAL_USERS);
-      const user = users.find(u => u.email.toLowerCase() === email.trim().toLowerCase() && u.password === password);
+      const user = users.find(u => u.email.toLowerCase() === cleanEmail && (u.passwordHash === hashed || u.password === password));
       if (user) {
         const safeUser = { ...user };
         delete safeUser.password;
+        delete safeUser.passwordHash;
         setItem(STORAGE_KEYS.CURRENT_USER, safeUser);
         return { success: true, user: safeUser };
       }
@@ -433,20 +445,24 @@ const DB = (() => {
     },
 
     register: (userData) => {
+      const cleanEmail = String(userData.email || '').trim().toLowerCase();
+      if (String(userData.password || '').length < 6) {
+        return { success: false, message: "Şifreniz en az 6 karakter olmalıdır!" };
+      }
       const users = getItem(STORAGE_KEYS.USERS, INITIAL_USERS);
-      const exists = users.some(u => u.email.toLowerCase() === userData.email.trim().toLowerCase());
+      const exists = users.some(u => u.email.toLowerCase() === cleanEmail);
       if (exists) {
         return { success: false, message: "Bu e-posta adresiyle zaten kayıtlı bir hesap var!" };
       }
 
       const newUser = {
         id: "usr-" + Date.now().toString().slice(-6),
-        name: userData.name.trim(),
-        email: userData.email.trim().toLowerCase(),
-        password: userData.password,
-        phone: userData.phone || "",
-        city: userData.city || "",
-        address: userData.address || "",
+        name: String(userData.name || '').replace(/[<>]/g, '').trim(),
+        email: cleanEmail,
+        passwordHash: hashPass(cleanEmail, userData.password),
+        phone: String(userData.phone || "").replace(/[<>]/g, '').trim(),
+        city: String(userData.city || "").replace(/[<>]/g, '').trim(),
+        address: String(userData.address || "").replace(/[<>]/g, '').trim(),
         createdAt: new Date().toISOString()
       };
 
@@ -454,7 +470,7 @@ const DB = (() => {
       setItem(STORAGE_KEYS.USERS, users);
 
       const safeUser = { ...newUser };
-      delete safeUser.password;
+      delete safeUser.passwordHash;
       setItem(STORAGE_KEYS.CURRENT_USER, safeUser);
       return { success: true, user: safeUser };
     },
@@ -568,10 +584,6 @@ const DB = (() => {
 
     createOrder: (orderPayload) => {
       const currentUser = DB.getCurrentUser();
-      if (!currentUser) {
-        return { success: false, message: "Sipariş oluşturmak için lütfen önce giriş yapın!" };
-      }
-
       const cart = DB.getCart();
       if (cart.length === 0) {
         return { success: false, message: "Sepetinizde ürün bulunmuyor!" };
@@ -615,23 +627,24 @@ const DB = (() => {
 
       const orderNumber = "MT-" + Math.floor(100000 + Math.random() * 900000);
       const orders = getItem(STORAGE_KEYS.ORDERS, []);
+      const userObj = currentUser || {};
 
       const newOrder = {
         orderId: "ord-" + Date.now().toString().slice(-6) + Math.floor(10 + Math.random() * 89),
         orderNumber: orderNumber,
-        userId: cleanText(currentUser.id, 60),
-        userName: cleanText(orderPayload.fullName || currentUser.name, 120),
-        userEmail: cleanText(currentUser.email, 150),
-        phone: cleanText(orderPayload.phone || currentUser.phone, 40),
+        userId: cleanText(userObj.id || "misafir", 60),
+        userName: cleanText(orderPayload.fullName || userObj.name, 120),
+        userEmail: cleanText(orderPayload.email || userObj.email, 150),
+        phone: cleanText(orderPayload.phone || userObj.phone, 40),
         shippingAddress: {
-          fullName: cleanText(orderPayload.fullName || currentUser.name, 120),
-          city: cleanText(orderPayload.city || currentUser.city, 80),
+          fullName: cleanText(orderPayload.fullName || userObj.name, 120),
+          city: cleanText(orderPayload.city || userObj.city, 80),
           district: cleanText(orderPayload.district || "", 80),
-          address: cleanText(orderPayload.address || currentUser.address, 400),
+          address: cleanText(orderPayload.address || userObj.address, 400),
           postalCode: cleanText(orderPayload.postalCode || "", 20)
         },
         shippingCarrier: cleanText(orderPayload.shippingCarrier || "Yurtiçi Kargo", 60),
-        paymentMethod: cleanText(orderPayload.paymentMethod || "Kredi Kartı", 60),
+        paymentMethod: cleanText(orderPayload.paymentMethod || "Havale / EFT ile Ödeme", 60),
         items: orderItems,
         subtotalTRY: totalAmountTRY,
         shippingFeeTRY: (totalAmountTRY >= 500 || totalAmountTRY === 0) ? 0 : 49,
