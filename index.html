@@ -826,7 +826,13 @@
         </div>
 
         <div class="flex flex-col">
-          <span id="qv-category" class="text-[10px] font-bold tracking-widest text-[#A8823B] uppercase mb-1">KOLYE</span>
+          <div class="flex items-center justify-between gap-2 mb-1 pr-8">
+            <span id="qv-category" class="text-[10px] font-bold tracking-widest text-[#A8823B] uppercase">KOLYE</span>
+            <button type="button" onclick="App.copyProductLink()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FCFAF7] hover:bg-[#EFE8DD] border border-[#EFE8DD] text-[11px] font-medium text-[#383836] transition-colors" title="Bu ürünün direkt linkini kopyala">
+              <i data-lucide="link-2" class="w-3 h-3 text-[#A8823B]"></i>
+              <span>Ürün Linkini Kopyala</span>
+            </button>
+          </div>
           <h2 id="qv-title" class="font-serif-luxury text-2xl font-semibold text-[#141413] mb-2 leading-snug">Ürün</h2>
           
           <div class="flex items-baseline gap-3 mb-4">

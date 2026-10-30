@@ -930,8 +930,41 @@ const App = (() => {
     }
   };
 
-  // Quick View
-  const openQuickView = (productId) => {
+  // Quick View & Direct Product URL / SEO
+  const DEFAULT_DOC_TITLE = 'ModernTakı | moderntaki.co - Zarif ve Modern Takı Modelleri';
+
+  const updateProductSeoSchema = (product) => {
+    let scriptEl = document.getElementById('product-jsonld');
+    if (!product) {
+      if (scriptEl) scriptEl.remove();
+      return;
+    }
+    if (!scriptEl) {
+      scriptEl = document.createElement('script');
+      scriptEl.id = 'product-jsonld';
+      scriptEl.type = 'application/ld+json';
+      document.head.appendChild(scriptEl);
+    }
+    const price = product.discountPriceTRY || product.priceTRY;
+    scriptEl.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "sku": product.id,
+      "name": product.name.tr,
+      "description": product.description.tr,
+      "image": product.images,
+      "brand": { "@type": "Brand", "name": "ModernTakı" },
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "TRY",
+        "price": price,
+        "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        "url": window.location.href
+      }
+    });
+  };
+
+  const openQuickView = (productId, skipHistory = false) => {
     const product = DB.getProductById(productId);
     if (!product) return;
 
@@ -941,6 +974,16 @@ const App = (() => {
 
     const title = I18N.currentLang === 'tr' ? product.name.tr : product.name.en;
     const desc = I18N.currentLang === 'tr' ? product.description.tr : product.description.en;
+
+    if (!skipHistory && window.history && window.history.pushState) {
+      try {
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.set('urun', productId);
+        window.history.pushState({ productId }, '', nextUrl.toString());
+      } catch (e) {}
+    }
+    document.title = `${title} | ModernTakı`;
+    updateProductSeoSchema(product);
 
     document.getElementById('qv-title').textContent = title;
     document.getElementById('qv-desc').textContent = desc;
@@ -1003,9 +1046,32 @@ const App = (() => {
     if (window.lucide) lucide.createIcons();
   };
 
-  const closeQuickView = () => {
+  const closeQuickView = (skipHistory = false) => {
     const modal = document.getElementById('quick-view-modal');
     if (modal) modal.classList.add('hidden');
+    document.title = DEFAULT_DOC_TITLE;
+    updateProductSeoSchema(null);
+    if (!skipHistory && window.history && window.history.replaceState) {
+      try {
+        const cleanUrl = new URL(window.location.href);
+        if (cleanUrl.searchParams.has('urun')) {
+          cleanUrl.searchParams.delete('urun');
+          window.history.replaceState({}, '', cleanUrl.toString());
+        }
+      } catch (e) {}
+    }
+  };
+
+  const copyProductLink = async () => {
+    if (!state.quickViewProductId) return;
+    try {
+      const shareUrl = new URL(window.location.href);
+      shareUrl.searchParams.set('urun', state.quickViewProductId);
+      await navigator.clipboard.writeText(shareUrl.toString());
+      showToast("Ürünün direkt paylaşım linki kopyalandı! 🔗");
+    } catch (e) {
+      showToast("Link kopyalanamadı, adres çubuğundan kopyalayabilirsiniz.", "error");
+    }
   };
 
   const changeQuickViewQty = (delta) => {
@@ -1341,6 +1407,21 @@ const App = (() => {
     updateWishlistBadge();
     updateAuthUI();
     setupEventListeners();
+
+    // Open product directly if ?urun=mt-xxx is present in URL
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlProductId = params.get('urun');
+      if (urlProductId && DB.getProductById(urlProductId)) {
+        openQuickView(urlProductId, true);
+      }
+      window.addEventListener('popstate', () => {
+        const p = new URLSearchParams(window.location.search).get('urun');
+        if (p && DB.getProductById(p)) openQuickView(p, true);
+        else closeQuickView(true);
+      });
+    } catch (e) {}
+
     if (DB.syncStockFromCloud) {
       DB.syncStockFromCloud().then(res => {
         if (res && res.changed) renderProducts();
@@ -1374,6 +1455,7 @@ const App = (() => {
     handleLogout,
     openQuickView,
     closeQuickView,
+    copyProductLink,
     changeQuickViewQty,
     addQuickViewToCart,
     openPolicyModal,
