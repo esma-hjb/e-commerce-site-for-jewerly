@@ -424,14 +424,46 @@ const DB = (() => {
       return true;
     },
 
-    // USERS & AUTH
+    // USERS & AUTH (Supabase Cloud Customers + Local Fallback)
     getUsers: () => getItem(STORAGE_KEYS.USERS, INITIAL_USERS),
 
     getCurrentUser: () => getItem(STORAGE_KEYS.CURRENT_USER, null),
 
-    login: (email, password) => {
+    login: async (email, password) => {
       const cleanEmail = String(email || '').trim().toLowerCase();
       const hashed = hashPass(cleanEmail, password);
+
+      // 1. Try Supabase Cloud Login first
+      try {
+        const { url, anonKey } = DB.getCloudConfig();
+        if (url && url.includes('supabase.co') && anonKey) {
+          const cleanUrl = url.replace(/\/+$/, '');
+          const res = await fetch(`${cleanUrl}/rest/v1/rpc/login_customer`, {
+            method: 'POST',
+            headers: {
+              'apikey': anonKey,
+              'Authorization': `Bearer ${anonKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              p_email: cleanEmail,
+              p_password_hash: hashed
+            })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.ok && data.user) {
+              setItem(STORAGE_KEYS.CURRENT_USER, data.user);
+              return { success: true, user: data.user };
+            }
+            if (data && data.ok === false) {
+              return { success: false, message: data.message || "E-posta veya şifre hatalı!" };
+            }
+          }
+        }
+      } catch (e) {}
+
+      // 2. Fallback to local storage if offline or SQL not run yet
       const users = getItem(STORAGE_KEYS.USERS, INITIAL_USERS);
       const user = users.find(u => u.email.toLowerCase() === cleanEmail && (u.passwordHash === hashed || u.password === password));
       if (user) {
@@ -444,11 +476,48 @@ const DB = (() => {
       return { success: false, message: "E-posta veya şifre hatalı!" };
     },
 
-    register: (userData) => {
+    register: async (userData) => {
       const cleanEmail = String(userData.email || '').trim().toLowerCase();
       if (String(userData.password || '').length < 6) {
         return { success: false, message: "Şifreniz en az 6 karakter olmalıdır!" };
       }
+      const cleanName = String(userData.name || '').replace(/[<>]/g, '').trim();
+      const cleanPhone = String(userData.phone || "").replace(/[<>]/g, '').trim();
+      const hashed = hashPass(cleanEmail, userData.password);
+
+      // 1. Try Supabase Cloud Registration first
+      try {
+        const { url, anonKey } = DB.getCloudConfig();
+        if (url && url.includes('supabase.co') && anonKey) {
+          const cleanUrl = url.replace(/\/+$/, '');
+          const res = await fetch(`${cleanUrl}/rest/v1/rpc/register_customer`, {
+            method: 'POST',
+            headers: {
+              'apikey': anonKey,
+              'Authorization': `Bearer ${anonKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              p_name: cleanName,
+              p_email: cleanEmail,
+              p_phone: cleanPhone,
+              p_password_hash: hashed
+            })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.ok && data.user) {
+              setItem(STORAGE_KEYS.CURRENT_USER, data.user);
+              return { success: true, user: data.user };
+            }
+            if (data && data.ok === false) {
+              return { success: false, message: data.message || "Bu e-posta adresiyle zaten kayıtlı bir hesap var!" };
+            }
+          }
+        }
+      } catch (e) {}
+
+      // 2. Fallback to local storage
       const users = getItem(STORAGE_KEYS.USERS, INITIAL_USERS);
       const exists = users.some(u => u.email.toLowerCase() === cleanEmail);
       if (exists) {
@@ -457,10 +526,10 @@ const DB = (() => {
 
       const newUser = {
         id: "usr-" + Date.now().toString().slice(-6),
-        name: String(userData.name || '').replace(/[<>]/g, '').trim(),
+        name: cleanName,
         email: cleanEmail,
-        passwordHash: hashPass(cleanEmail, userData.password),
-        phone: String(userData.phone || "").replace(/[<>]/g, '').trim(),
+        passwordHash: hashed,
+        phone: cleanPhone,
         city: String(userData.city || "").replace(/[<>]/g, '').trim(),
         address: String(userData.address || "").replace(/[<>]/g, '').trim(),
         createdAt: new Date().toISOString()

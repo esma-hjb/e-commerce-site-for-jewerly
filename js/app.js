@@ -657,7 +657,9 @@ const App = (() => {
     showToast("Ürün sepetten kaldırıldı.");
   };
 
-  // CHECKOUT (Supports both Guest Checkout & Logged-in Customer)
+  // CHECKOUT (Hybrid Model: Offers Member Login/Register OR 1-Click Guest Checkout)
+  let pendingCheckoutAfterAuth = false;
+
   const startCheckout = () => {
     const cart = DB.getCart();
 
@@ -667,6 +669,19 @@ const App = (() => {
     }
 
     closeCartDrawer();
+    const currentUser = DB.getCurrentUser();
+    if (!currentUser) {
+      pendingCheckoutAfterAuth = true;
+      openAuthModal('login', true);
+      return;
+    }
+
+    openCheckoutModal();
+  };
+
+  const continueAsGuest = () => {
+    pendingCheckoutAfterAuth = false;
+    closeAuthModal();
     openCheckoutModal();
   };
 
@@ -801,10 +816,13 @@ const App = (() => {
     modal.classList.add('hidden');
   };
 
-  // CUSTOMER AUTH (Login / Register)
-  const openAuthModal = (mode = 'login') => {
+  // CUSTOMER AUTH (Login / Register via Supabase Cloud + Guest Option)
+  const openAuthModal = (mode = 'login', fromCheckout = false) => {
     const modal = document.getElementById('auth-modal');
     if (!modal) return;
+    if (!fromCheckout) pendingCheckoutAfterAuth = false;
+    const guestBox = document.getElementById('guest-checkout-box');
+    if (guestBox) guestBox.classList.toggle('hidden', !fromCheckout);
     setAuthMode(mode);
     modal.classList.remove('hidden');
   };
@@ -837,22 +855,26 @@ const App = (() => {
     }
   };
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     if (e) e.preventDefault();
     const email = document.getElementById('login-email')?.value;
     const password = document.getElementById('login-password')?.value;
 
-    const result = DB.login(email, password);
+    const result = await DB.login(email, password);
     if (result.success) {
       showToast(`Hoş geldiniz, ${result.user.name}!`);
       closeAuthModal();
       updateAuthUI();
+      if (pendingCheckoutAfterAuth) {
+        pendingCheckoutAfterAuth = false;
+        openCheckoutModal();
+      }
     } else {
       showToast(result.message, "error");
     }
   };
 
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     if (e) e.preventDefault();
     const name = document.getElementById('reg-name')?.value;
     const email = document.getElementById('reg-email')?.value;
@@ -864,11 +886,15 @@ const App = (() => {
       return;
     }
 
-    const result = DB.register({ name, email, password, phone });
+    const result = await DB.register({ name, email, password, phone });
     if (result.success) {
       showToast(`Hesabınız oluşturuldu! Hoş geldiniz, ${name}`);
       closeAuthModal();
       updateAuthUI();
+      if (pendingCheckoutAfterAuth) {
+        pendingCheckoutAfterAuth = false;
+        openCheckoutModal();
+      }
     } else {
       showToast(result.message, "error");
     }
@@ -1331,6 +1357,7 @@ const App = (() => {
     updateCartQty,
     removeFromCart,
     startCheckout,
+    continueAsGuest,
     openCheckoutModal,
     closeCheckoutModal,
     submitCheckoutOrder,

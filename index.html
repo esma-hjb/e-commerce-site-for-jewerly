@@ -594,6 +594,16 @@
         </button>
       </div>
 
+      <div id="guest-checkout-box" class="hidden mb-5 p-3.5 rounded-xl bg-[#FCFAF7] border border-[#D8B26E]/60 flex items-center justify-between gap-3">
+        <div class="text-xs">
+          <p class="font-bold text-[#141413]">Üye Olmadan Alışveriş</p>
+          <p class="text-[11px] text-neutral-500">Hesap açmadan doğrudan teslimat adımına geçebilirsiniz.</p>
+        </div>
+        <button type="button" onclick="App.continueAsGuest()" class="shrink-0 px-3.5 py-2 rounded-xl bg-[#141413] hover:bg-[#A8823B] text-[#E6C280] hover:text-white text-xs font-semibold transition-colors">
+          Üyeliksiz Devam Et →
+        </button>
+      </div>
+
       <div id="login-form-box">
         <form id="login-form" method="post" action="javascript:void(0);" autocomplete="on" class="space-y-4">
           <div>
