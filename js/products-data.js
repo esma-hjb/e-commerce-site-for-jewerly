@@ -1,6 +1,5 @@
 /**
  * ModernTakı (moderntaki.co) - Ürün Kataloğu Verisi
- * Bu dosya Yönetici Masası tarafından tek tıkla üretilir ve vitrine beslenir.
  */
 window.MODERNTAKI_CATALOG_VERSION = "2026-10-31T01:03:00.000Z";
 window.MODERNTAKI_CLOUD_CONFIG = {
