@@ -7,9 +7,7 @@ const I18N = {
   currentCurrency: 'TRY',
 
   currencies: {
-    TRY: { symbol: '₺', rate: 1.0, decimals: 0, position: 'after' },
-    USD: { symbol: '$', rate: 0.030, decimals: 2, position: 'before' },
-    EUR: { symbol: '€', rate: 0.028, decimals: 2, position: 'before' }
+    TRY: { symbol: '₺', rate: 1.0, decimals: 0, position: 'after' }
   },
 
   translations: {
