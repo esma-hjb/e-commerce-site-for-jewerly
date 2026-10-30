@@ -2,10 +2,10 @@
  * ModernTakı (moderntaki.co) - Ürün Kataloğu Verisi
  * Bu dosya Yönetici Masası tarafından tek tıkla üretilir ve vitrine beslenir.
  */
-window.MODERNTAKI_CATALOG_VERSION = "2026-10-29T16:25:00.000Z";
+window.MODERNTAKI_CATALOG_VERSION = "2026-10-31T01:03:00.000Z";
 window.MODERNTAKI_CLOUD_CONFIG = {
-  url: "",
-  anonKey: ""
+  url: "https://pvtiiqtvcnvtsdkveosc.supabase.co",
+  anonKey: "sb_publishable_3eEUgqi8rojA4Ih3kv16mA_2wLVSRTt"
 };
 window.MODERNTAKI_HERO_BANNER = {
   imageUrl: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=1000&q=85",

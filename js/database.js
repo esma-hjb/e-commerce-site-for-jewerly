@@ -653,8 +653,8 @@ const DB = (() => {
       const local = getItem(STORAGE_KEYS.CLOUD_SYNC, null);
       const winCfg = (typeof window !== 'undefined' && window.MODERNTAKI_CLOUD_CONFIG) ? window.MODERNTAKI_CLOUD_CONFIG : {};
       return {
-        url: ((local && local.url) || winCfg.url || '').trim(),
-        anonKey: ((local && local.anonKey) || winCfg.anonKey || '').trim()
+        url: ((local && local.url) || winCfg.url || 'https://pvtiiqtvcnvtsdkveosc.supabase.co').trim(),
+        anonKey: ((local && local.anonKey) || winCfg.anonKey || 'sb_publishable_3eEUgqi8rojA4Ih3kv16mA_2wLVSRTt').trim()
       };
     },
 
