@@ -610,25 +610,28 @@ const DB = (() => {
         DB.adjustStock(item.productId, -item.quantity);
       }
 
+      const cleanText = (val, maxLen = 250) =>
+        String(val || '').replace(/[<>]/g, '').trim().slice(0, maxLen);
+
       const orderNumber = "MT-" + Math.floor(100000 + Math.random() * 900000);
       const orders = getItem(STORAGE_KEYS.ORDERS, []);
 
       const newOrder = {
-        orderId: "ord-" + Date.now().toString().slice(-6),
+        orderId: "ord-" + Date.now().toString().slice(-6) + Math.floor(10 + Math.random() * 89),
         orderNumber: orderNumber,
-        userId: currentUser.id,
-        userName: currentUser.name,
-        userEmail: currentUser.email,
-        phone: orderPayload.phone || currentUser.phone,
+        userId: cleanText(currentUser.id, 60),
+        userName: cleanText(orderPayload.fullName || currentUser.name, 120),
+        userEmail: cleanText(currentUser.email, 150),
+        phone: cleanText(orderPayload.phone || currentUser.phone, 40),
         shippingAddress: {
-          fullName: orderPayload.fullName || currentUser.name,
-          city: orderPayload.city || currentUser.city,
-          district: orderPayload.district || "",
-          address: orderPayload.address || currentUser.address,
-          postalCode: orderPayload.postalCode || ""
+          fullName: cleanText(orderPayload.fullName || currentUser.name, 120),
+          city: cleanText(orderPayload.city || currentUser.city, 80),
+          district: cleanText(orderPayload.district || "", 80),
+          address: cleanText(orderPayload.address || currentUser.address, 400),
+          postalCode: cleanText(orderPayload.postalCode || "", 20)
         },
-        shippingCarrier: orderPayload.shippingCarrier || "Yurtiçi Kargo",
-        paymentMethod: orderPayload.paymentMethod || "Kredi Kartı",
+        shippingCarrier: cleanText(orderPayload.shippingCarrier || "Yurtiçi Kargo", 60),
+        paymentMethod: cleanText(orderPayload.paymentMethod || "Kredi Kartı", 60),
         items: orderItems,
         subtotalTRY: totalAmountTRY,
         shippingFeeTRY: (totalAmountTRY >= 500 || totalAmountTRY === 0) ? 0 : 49,
@@ -640,25 +643,59 @@ const DB = (() => {
       orders.unshift(newOrder);
       setItem(STORAGE_KEYS.ORDERS, orders);
       DB.clearCart();
-      try { DB.pushOrderToCloud(newOrder, 'createOrder'); } catch (e) {}
+      try { DB.pushOrderToCloud(newOrder); } catch (e) {}
 
       return { success: true, order: newOrder };
     },
 
-    // CLOUD ORDER SUBMISSION (Write-Only Public Endpoint)
+    // CLOUD ORDER SUBMISSION (Write-Only Public Endpoint via Supabase RLS)
     getCloudConfig: () => {
       const local = getItem(STORAGE_KEYS.CLOUD_SYNC, null);
       const winCfg = (typeof window !== 'undefined' && window.MODERNTAKI_CLOUD_CONFIG) ? window.MODERNTAKI_CLOUD_CONFIG : {};
       return {
-        url: (local && local.url) || winCfg.url || ''
+        url: ((local && local.url) || winCfg.url || '').trim(),
+        anonKey: ((local && local.anonKey) || winCfg.anonKey || '').trim()
       };
     },
 
     pushOrderToCloud: async (order) => {
       try {
-        const { url } = DB.getCloudConfig();
+        const { url, anonKey } = DB.getCloudConfig();
         if (!url) return { ok: false, reason: 'no_url' };
         const cleanUrl = url.replace(/\/+$/, '');
+
+        // 1. Supabase PostgreSQL (Row-Level Security: Anon INSERT only, zero SELECT/UPDATE/DELETE)
+        if (cleanUrl.includes('supabase.co')) {
+          if (!anonKey) return { ok: false, reason: 'no_anon_key' };
+          const res = await fetch(`${cleanUrl}/rest/v1/orders`, {
+            method: 'POST',
+            headers: {
+              'apikey': anonKey,
+              'Authorization': `Bearer ${anonKey}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({
+              order_id: order.orderId,
+              order_number: order.orderNumber,
+              user_name: order.userName,
+              user_email: order.userEmail,
+              phone: order.phone,
+              shipping_address: order.shippingAddress,
+              shipping_carrier: order.shippingCarrier,
+              payment_method: order.paymentMethod,
+              items: order.items,
+              subtotal_try: order.subtotalTRY,
+              shipping_fee_try: order.shippingFeeTRY,
+              total_try: order.totalTRY,
+              status: 'Hazırlanıyor',
+              raw_order: order
+            })
+          });
+          return { ok: res.ok, status: res.status };
+        }
+
+        // 2. Fallback: Firebase / Apps Script
         if (cleanUrl.includes('firebaseio.com') || cleanUrl.includes('firebasedatabase.app')) {
           await fetch(`${cleanUrl}/orders/${encodeURIComponent(order.orderId)}.json`, {
             method: 'PUT',

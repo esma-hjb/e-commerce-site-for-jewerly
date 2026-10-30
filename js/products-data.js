@@ -4,7 +4,8 @@
  */
 window.MODERNTAKI_CATALOG_VERSION = "2026-10-29T16:25:00.000Z";
 window.MODERNTAKI_CLOUD_CONFIG = {
-  url: ""
+  url: "",
+  anonKey: ""
 };
 window.MODERNTAKI_HERO_BANNER = {
   imageUrl: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=1000&q=85",
