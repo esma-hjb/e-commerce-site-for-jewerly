@@ -331,31 +331,31 @@ const App = (() => {
                 </button>
               ` : `
                 <div class="flex items-center gap-2">
-                  <div class="flex items-center border border-[#EFE8DD] rounded-xl bg-[#FCFAF7] p-1">
+                  <div class="flex items-center border border-[#EFE8DD] rounded-xl bg-[#FCFAF7] p-1 shrink-0">
                     <button 
                       onclick="App.changeProductCardQty('${product.id}', -1)" 
-                      class="stepper-btn w-7 h-7 rounded-lg flex items-center justify-center text-[#141413] hover:bg-[#EFE8DD] transition-colors"
+                      class="stepper-btn w-8 h-8 rounded-lg flex items-center justify-center text-[#141413] hover:bg-[#EFE8DD] active:bg-[#E5DEC9] transition-colors touch-manipulation"
                       title="Adet Azalt"
                     >
-                      <i data-lucide="minus" class="w-3 h-3"></i>
+                      <i data-lucide="minus" class="w-3.5 h-3.5"></i>
                     </button>
-                    <span id="qty-val-${product.id}" class="w-7 text-center text-xs font-bold text-[#141413]">
+                    <span id="qty-val-${product.id}" class="w-7 text-center text-xs font-bold text-[#141413] select-none">
                       ${currentQty}
                     </span>
                     <button 
                       onclick="App.changeProductCardQty('${product.id}', 1)" 
-                      class="stepper-btn w-7 h-7 rounded-lg flex items-center justify-center text-[#141413] hover:bg-[#EFE8DD] transition-colors"
+                      class="stepper-btn w-8 h-8 rounded-lg flex items-center justify-center text-[#141413] hover:bg-[#EFE8DD] active:bg-[#E5DEC9] transition-colors touch-manipulation"
                       title="Adet Artır"
                     >
-                      <i data-lucide="plus" class="w-3 h-3"></i>
+                      <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                     </button>
                   </div>
 
                   <button 
                     onclick="App.addProductCardToCart('${product.id}')" 
-                    class="flex-1 py-2 px-3 rounded-xl bg-[#141413] hover:bg-[#A8823B] text-white text-xs font-semibold tracking-wider flex items-center justify-center gap-1.5 transition-all active:scale-98 shadow-sm"
+                    class="flex-1 min-h-[40px] py-2.5 px-3 rounded-xl bg-[#141413] hover:bg-[#A8823B] text-white text-xs font-semibold tracking-wider flex items-center justify-center gap-1.5 whitespace-nowrap transition-all active:scale-98 shadow-sm touch-manipulation"
                   >
-                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5 shrink-0"></i>
                     <span>${I18N.t('add_to_cart')}</span>
                   </button>
                 </div>
@@ -558,12 +558,12 @@ const App = (() => {
 
             <div class="flex items-center justify-between mt-2 pt-2 border-t border-[#EFE8DD]/70">
               <div class="flex items-center border border-[#D8B26E]/40 rounded-lg bg-white">
-                <button onclick="App.updateCartQty('${item.cartItemId}', ${item.quantity - 1})" class="w-6 h-6 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 rounded-l-lg transition-colors">
-                  <i data-lucide="minus" class="w-3 h-3"></i>
+                <button onclick="App.updateCartQty('${item.cartItemId}', ${item.quantity - 1})" class="w-8 h-8 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 active:bg-neutral-200 rounded-l-lg transition-colors touch-manipulation">
+                  <i data-lucide="minus" class="w-3.5 h-3.5"></i>
                 </button>
-                <span class="w-8 text-center text-xs font-bold text-[#141413]">${item.quantity}</span>
-                <button onclick="App.updateCartQty('${item.cartItemId}', ${item.quantity + 1})" class="w-6 h-6 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 rounded-r-lg transition-colors">
-                  <i data-lucide="plus" class="w-3 h-3"></i>
+                <span class="w-8 text-center text-xs font-bold text-[#141413] select-none">${item.quantity}</span>
+                <button onclick="App.updateCartQty('${item.cartItemId}', ${item.quantity + 1})" class="w-8 h-8 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 active:bg-neutral-200 rounded-r-lg transition-colors touch-manipulation">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
 
