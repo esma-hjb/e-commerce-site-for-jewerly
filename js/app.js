@@ -792,7 +792,10 @@ const App = (() => {
     }
   };
 
+  let lastCreatedOrder = null;
+
   const showOrderSuccessModal = (order) => {
+    lastCreatedOrder = order || null;
     const modal = document.getElementById('order-success-modal');
     if (!modal) return;
 
@@ -814,6 +817,136 @@ const App = (() => {
     if (!modal) return;
 
     modal.classList.add('hidden');
+  };
+
+  const escapeHtml = (val) =>
+    String(val ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+  const openOrderTrackingModal = () => {
+    const modal = document.getElementById('order-tracking-modal');
+    if (!modal) return;
+    const numInput = document.getElementById('track-order-number');
+    const contactInput = document.getElementById('track-order-contact');
+    if (lastCreatedOrder && numInput && !numInput.value) {
+      numInput.value = lastCreatedOrder.orderNumber || '';
+    }
+    if (lastCreatedOrder && contactInput && !contactInput.value) {
+      contactInput.value = lastCreatedOrder.userEmail || lastCreatedOrder.phone || '';
+    }
+    modal.classList.remove('hidden');
+    if (window.lucide) lucide.createIcons();
+  };
+
+  const closeOrderTrackingModal = () => {
+    const modal = document.getElementById('order-tracking-modal');
+    if (modal) modal.classList.add('hidden');
+  };
+
+  const handleOrderTrackingSubmit = async (e) => {
+    if (e) e.preventDefault();
+    const numInput = document.getElementById('track-order-number');
+    const contactInput = document.getElementById('track-order-contact');
+    const resultBox = document.getElementById('order-tracking-result');
+    const submitBtn = document.getElementById('track-order-submit-btn');
+
+    if (!numInput || !contactInput || !resultBox) return;
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Sorgulanıyor...</span>';
+    }
+
+    const res = await DB.trackOrder(numInput.value, contactInput.value);
+
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i data-lucide="search" class="w-4 h-4 text-[#E6C280]"></i><span>Siparişimi Sorgula</span>';
+    }
+
+    resultBox.classList.remove('hidden');
+
+    if (!res.success || !res.order) {
+      resultBox.innerHTML = `
+        <div class="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-start gap-2.5">
+          <i data-lucide="alert-circle" class="w-4 h-4 text-red-600 shrink-0 mt-0.5"></i>
+          <div>
+            <p class="font-bold">Sipariş Bulunamadı</p>
+            <p class="mt-0.5 text-[11px]">${escapeHtml(res.message)}</p>
+          </div>
+        </div>
+      `;
+      if (window.lucide) lucide.createIcons();
+      return;
+    }
+
+    const o = res.order;
+    const isShipped = String(o.status || '').toLowerCase().includes('kargo') || Boolean(o.trackingCode);
+    const itemsHtml = (Array.isArray(o.items) ? o.items : []).map(it => {
+      const title = (it.name && (it.name.tr || it.name)) || 'Takı';
+      return `<li class="flex items-center justify-between py-1 border-b border-[#EFE8DD] last:border-0">
+        <span class="truncate pr-2">${escapeHtml(title)} <strong class="text-[#A8823B]">x${Number(it.quantity) || 1}</strong></span>
+        <span class="font-semibold shrink-0">${I18N.formatPrice(it.totalPriceTRY || it.unitPriceTRY || 0)}</span>
+      </li>`;
+    }).join('');
+
+    resultBox.innerHTML = `
+      <div class="p-4 rounded-2xl bg-[#FCFAF7] border border-[#D8B26E]/60 text-xs space-y-3">
+        <div class="flex items-center justify-between pb-2.5 border-b border-[#EFE8DD]">
+          <div>
+            <span class="text-[10px] uppercase tracking-wider text-neutral-400 block">Sipariş No</span>
+            <span class="font-bold text-sm text-[#141413]">#${escapeHtml(o.orderNumber)}</span>
+          </div>
+          <span class="px-3 py-1 rounded-full text-[11px] font-bold ${isShipped ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-amber-100 text-amber-800 border border-amber-300'}">
+            ${escapeHtml(o.status)}
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-[11px]">
+          <div>
+            <span class="text-neutral-400 block">Alıcı (Gizlilik Korumalı):</span>
+            <span class="font-semibold text-[#141413]">${escapeHtml(o.maskedName)}</span>
+          </div>
+          <div>
+            <span class="text-neutral-400 block">Kargo Firması:</span>
+            <span class="font-semibold text-[#141413]">${escapeHtml(o.shippingCarrier)}</span>
+          </div>
+        </div>
+
+        ${o.trackingCode ? `
+          <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between gap-2">
+            <div>
+              <span class="text-[10px] font-bold uppercase text-emerald-700 block">Kargo Takip Kodu</span>
+              <span class="font-mono font-bold text-sm text-emerald-950">${escapeHtml(o.trackingCode)}</span>
+            </div>
+            <button type="button" onclick="navigator.clipboard.writeText('${escapeHtml(o.trackingCode)}')" class="px-2.5 py-1.5 rounded-lg bg-white border border-emerald-300 text-[11px] font-semibold text-emerald-900 hover:bg-emerald-100 transition-colors">
+              Kodu Kopyala
+            </button>
+          </div>
+        ` : `
+          <div class="p-2.5 rounded-xl bg-white border border-[#EFE8DD] text-[11px] text-neutral-600">
+            Siparişiniz özenle hazırlanmaktadır. Kargoya teslim edildiğinde takip kodunuz burada görünecektir.
+          </div>
+        `}
+
+        ${itemsHtml ? `
+          <div>
+            <span class="text-[10px] uppercase tracking-wider text-neutral-400 block mb-1">Sipariş İçeriği</span>
+            <ul class="bg-white rounded-xl p-2.5 border border-[#EFE8DD] text-[11px] space-y-1">${itemsHtml}</ul>
+          </div>
+        ` : ''}
+
+        <div class="flex items-center justify-between pt-2 border-t border-[#EFE8DD] font-bold text-[#141413]">
+          <span>Toplam Tutar:</span>
+          <span class="text-[#A8823B] text-sm">${I18N.formatPrice(o.totalTRY)}</span>
+        </div>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
   };
 
   // CUSTOMER AUTH (Login / Register via Supabase Cloud + Guest Option)
@@ -1449,6 +1582,9 @@ const App = (() => {
     submitCheckoutOrder,
     showOrderSuccessModal,
     closeOrderSuccessModal,
+    openOrderTrackingModal,
+    closeOrderTrackingModal,
+    handleOrderTrackingSubmit,
     openAuthModal,
     closeAuthModal,
     setAuthMode,

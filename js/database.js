@@ -830,6 +830,94 @@ const DB = (() => {
       }
     },
 
+    // PRIVACY-PROTECTED ORDER TRACKING (Requires BOTH Order Number AND Email/Phone)
+    trackOrder: async (orderNumberInput, contactInput) => {
+      const cleanOrderNo = String(orderNumberInput || '').trim().replace(/^#/, '').toUpperCase();
+      const rawContact = String(contactInput || '').trim().toLowerCase();
+      const digitsContact = rawContact.replace(/\D/g, '');
+
+      if (!cleanOrderNo || !rawContact) {
+        return { success: false, message: "Lütfen hem sipariş numaranızı hem de e-posta/telefon bilginizi girin." };
+      }
+
+      const maskFullName = (name) => {
+        const parts = String(name || 'Müşteri').trim().split(/\s+/);
+        return parts.map(p => p.length <= 2 ? p[0] + '*' : p.slice(0, 2) + '*'.repeat(Math.min(4, p.length - 2))).join(' ');
+      };
+
+      // 1. Check Supabase Cloud via narrow SECURITY DEFINER RPC (track_order)
+      try {
+        const { url, anonKey } = DB.getCloudConfig();
+        if (url && url.includes('supabase.co') && anonKey) {
+          const cleanUrl = url.replace(/\/+$/, '');
+          const res = await fetch(`${cleanUrl}/rest/v1/rpc/track_order`, {
+            method: 'POST',
+            headers: {
+              'apikey': anonKey,
+              'Authorization': `Bearer ${anonKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              p_order_number: cleanOrderNo,
+              p_contact: rawContact
+            })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.ok && data.order) {
+              return {
+                success: true,
+                order: {
+                  orderNumber: data.order.orderNumber || cleanOrderNo,
+                  maskedName: maskFullName(data.order.userName),
+                  status: data.order.status || 'Hazırlanıyor',
+                  shippingCarrier: data.order.shippingCarrier || 'Yurtiçi Kargo',
+                  trackingCode: data.order.trackingCode || '',
+                  paymentMethod: data.order.paymentMethod || '-',
+                  totalTRY: data.order.totalTRY || 0,
+                  createdAt: data.order.createdAt || null,
+                  items: Array.isArray(data.order.items) ? data.order.items : []
+                }
+              };
+            }
+          }
+        }
+      } catch (e) {}
+
+      // 2. Fallback: Check local browser orders (strictly matching BOTH orderNumber and email/phone)
+      const localOrders = getItem(STORAGE_KEYS.ORDERS, []);
+      const matched = localOrders.find(o => {
+        if (!o || String(o.orderNumber || '').trim().toUpperCase() !== cleanOrderNo) return false;
+        const emailMatch = o.userEmail && String(o.userEmail).trim().toLowerCase() === rawContact;
+        const orderDigits = String(o.phone || '').replace(/\D/g, '');
+        const phoneMatch = digitsContact.length >= 10 && orderDigits.length >= 10 &&
+          orderDigits.slice(-10) === digitsContact.slice(-10);
+        return emailMatch || phoneMatch;
+      });
+
+      if (matched) {
+        return {
+          success: true,
+          order: {
+            orderNumber: matched.orderNumber,
+            maskedName: maskFullName(matched.userName),
+            status: matched.status || 'Hazırlanıyor',
+            shippingCarrier: matched.shippingCarrier || 'Yurtiçi Kargo',
+            trackingCode: matched.trackingCode || '',
+            paymentMethod: matched.paymentMethod || '-',
+            totalTRY: matched.totalTRY || 0,
+            createdAt: matched.createdAt || null,
+            items: Array.isArray(matched.items) ? matched.items : []
+          }
+        };
+      }
+
+      return {
+        success: false,
+        message: "Girdiğiniz sipariş numarası ve iletişim bilgisiyle eşleşen bir sipariş bulunamadı."
+      };
+    },
+
     // HERO BANNER
     getHeroBanner: () => {
       const banner = getItem(STORAGE_KEYS.BANNER, null);

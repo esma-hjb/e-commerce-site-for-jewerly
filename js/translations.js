@@ -175,13 +175,10 @@ const I18N = {
     }
   },
 
-  setLang: (lang) => {
-    if (I18N.translations[lang]) {
-      I18N.currentLang = lang;
-      localStorage.setItem('moderntaki_lang', lang);
-      return true;
-    }
-    return false;
+  setLang: () => {
+    I18N.currentLang = 'tr';
+    try { localStorage.removeItem('moderntaki_lang'); } catch (e) {}
+    return true;
   },
 
   setCurrency: (currency) => {

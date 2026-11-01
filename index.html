@@ -124,12 +124,12 @@
         ✨ moderntaki.co | Tarzınızı tamamlayan en yeni takı tasarımları
       </div>
 
-      <!-- Language Switch -->
+      <!-- Order Tracking Quick Access -->
       <div class="flex items-center gap-3 text-[11px]">
-        <div class="flex items-center bg-[#212120] rounded-lg p-0.5 border border-[#383836]">
-          <button onclick="App.switchLanguage('tr')" data-lang="tr" class="lang-btn px-2 py-0.5 rounded text-[10px] transition-colors">TR 🇹🇷</button>
-          <button onclick="App.switchLanguage('en')" data-lang="en" class="lang-btn px-2 py-0.5 rounded text-[10px] transition-colors">EN 🇬🇧</button>
-        </div>
+        <button type="button" onclick="App.openOrderTrackingModal()" class="flex items-center gap-1.5 bg-[#212120] hover:bg-[#2E2E2B] text-[#E6C280] px-2.5 py-1 rounded-lg border border-[#383836] transition-colors font-medium">
+          <i data-lucide="package-search" class="w-3.5 h-3.5 text-[#E6C280]"></i>
+          <span>Sipariş Takibi</span>
+        </button>
       </div>
 
     </div>
@@ -182,8 +182,19 @@
           </div>
         </div>
 
-        <!-- Right Action Icons: Wishlist, User, Cart -->
-        <div class="flex items-center gap-1.5 sm:gap-4 shrink-0">
+        <!-- Right Action Icons: Order Tracking, Wishlist, User, Cart -->
+        <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
+
+          <!-- Order Tracking -->
+          <button 
+            type="button"
+            onclick="App.openOrderTrackingModal()" 
+            class="flex items-center gap-1.5 px-2.5 py-2 rounded-full hover:bg-white text-[#141413] transition-colors text-xs font-semibold" 
+            title="Sipariş & Kargo Takibi"
+          >
+            <i data-lucide="package-search" class="w-4 h-4 text-[#A8823B]"></i>
+            <span class="hidden xl:inline">Sipariş Takibi</span>
+          </button>
           
           <!-- Wishlist -->
           <button 
@@ -461,6 +472,7 @@
         <div>
           <h4 class="font-serif-luxury text-base font-semibold text-[#141413] mb-3">Müşteri Hizmetleri</h4>
           <ul class="space-y-2">
+            <li><a href="#" onclick="App.openOrderTrackingModal(); return false;" class="hover:text-[#A8823B] flex items-center gap-1.5 transition-colors font-medium text-[#141413]"><i data-lucide="package-search" class="w-3.5 h-3.5 text-[#C5A059]"></i><span>Sipariş & Kargo Takibi</span></a></li>
             <li><a href="https://ig.me/m/moderntaki.co" target="_blank" class="hover:text-[#A8823B] flex items-center gap-1.5 transition-colors"><i data-lucide="instagram" class="w-3.5 h-3.5 text-[#C5A059]"></i><span>Instagram DM Destek</span></a></li>
             <li><a href="#" onclick="App.toggleChatAssistant(); return false;" class="hover:text-[#A8823B] flex items-center gap-1.5 transition-colors"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#C5A059]"></i><span>Canlı Stil Asistanı</span></a></li>
             <li><a href="#koleksiyon" class="hover:text-[#A8823B] transition-colors">Tüm Koleksiyonlar</a></li>
@@ -780,10 +792,55 @@
           <i data-lucide="instagram" class="w-4 h-4"></i>
           <span>Instagram DM'den Siparişini Bildir (@moderntaki.co)</span>
         </a>
+        <button type="button" onclick="App.closeOrderSuccessModal(); App.openOrderTrackingModal();" class="w-full py-3 rounded-xl bg-[#FCFAF7] border border-[#D8B26E] text-[#141413] text-xs font-semibold hover:bg-[#EFE8DD] transition-colors flex items-center justify-center gap-1.5">
+          <i data-lucide="package-search" class="w-4 h-4 text-[#A8823B]"></i>
+          <span>Sipariş & Kargo Takibi Ekranını Aç</span>
+        </button>
         <button onclick="App.closeOrderSuccessModal()" class="w-full py-3 rounded-xl bg-[#141413] text-white text-xs font-semibold hover:bg-[#A8823B] transition-colors">
           Alışverişe Devam Et
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- D2. ORDER & CARGO TRACKING MODAL (Privacy-Protected Lookup) -->
+  <div id="order-tracking-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 modal-backdrop-blur overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-[#EFE8DD] shadow-2xl relative my-8">
+      <button type="button" onclick="App.closeOrderTrackingModal()" class="absolute top-5 right-5 text-neutral-400 hover:text-[#141413]">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-11 h-11 rounded-2xl bg-[#FCFAF7] border border-[#D8B26E]/50 flex items-center justify-center text-[#A8823B] shrink-0">
+          <i data-lucide="package-search" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="font-serif-luxury text-2xl font-bold text-[#141413]">Sipariş & Kargo Takibi</h3>
+          <p class="text-[11px] text-neutral-500">Sipariş numaranız ve e-posta/telefon bilginizle sorgulayın.</p>
+        </div>
+      </div>
+
+      <div class="p-3 rounded-xl bg-[#FCFAF7] border border-[#EFE8DD] text-[11px] text-[#383836] mb-5 flex items-start gap-2">
+        <i data-lucide="shield-check" class="w-4 h-4 text-[#C5A059] shrink-0 mt-0.5"></i>
+        <span><strong>Gizlilik Koruması:</strong> Sipariş bilgileri yalnızca sipariş numarası ve siparişte kullanılan e-posta/telefon eşleştiğinde görüntülenir. Açık adres bilgisi gizli tutulur.</span>
+      </div>
+
+      <form id="order-tracking-form" method="post" action="javascript:void(0);" onsubmit="App.handleOrderTrackingSubmit(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-semibold text-[#141413] mb-1">Sipariş Numaranız *</label>
+          <input type="text" id="track-order-number" required placeholder="Örn: MT-123456" class="w-full px-4 py-2.5 rounded-xl border border-[#EFE8DD] text-xs focus:outline-none focus:border-[#C5A059] uppercase">
+        </div>
+        <div>
+          <label class="block font-semibold text-[#141413] mb-1">Siparişteki E-Posta veya Telefon Numaranız *</label>
+          <input type="text" id="track-order-contact" required placeholder="ornek@eposta.com veya 05XX..." class="w-full px-4 py-2.5 rounded-xl border border-[#EFE8DD] text-xs focus:outline-none focus:border-[#C5A059]">
+        </div>
+        <button type="submit" id="track-order-submit-btn" class="w-full py-3.5 rounded-xl bg-[#141413] hover:bg-[#A8823B] text-white text-xs font-semibold tracking-wider uppercase transition-all shadow-md flex items-center justify-center gap-2">
+          <i data-lucide="search" class="w-4 h-4 text-[#E6C280]"></i>
+          <span>Siparişimi Sorgula</span>
+        </button>
+      </form>
+
+      <div id="order-tracking-result" class="hidden mt-5 pt-5 border-t border-[#EFE8DD]"></div>
     </div>
   </div>
 
