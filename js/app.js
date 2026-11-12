@@ -808,8 +808,25 @@ const App = (() => {
       igBtn.href = 'https://ig.me/m/moderntaki.co';
     }
 
+    const waBtn = document.getElementById('wa-order-btn');
+    const waUrl = (DB.getWhatsAppOrderUrl && order) ? DB.getWhatsAppOrderUrl(order) : '';
+    if (waBtn) {
+      if (waUrl) {
+        waBtn.href = waUrl;
+        waBtn.classList.remove('hidden');
+      } else {
+        waBtn.classList.add('hidden');
+      }
+    }
+
     modal.classList.remove('hidden');
     if (window.lucide) lucide.createIcons();
+
+    if (waUrl) {
+      setTimeout(() => {
+        try { window.open(waUrl, '_blank', 'noopener,noreferrer'); } catch (e) {}
+      }, 350);
+    }
   };
 
   const closeOrderSuccessModal = () => {

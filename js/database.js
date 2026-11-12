@@ -13,7 +13,36 @@ const DB = (() => {
     WISHLIST: 'moderntaki_wishlist',
     ORDERS: 'moderntaki_orders',
     BANNER: 'moderntaki_hero_banner',
-    CLOUD_SYNC: 'moderntaki_cloud_sync'
+    CLOUD_SYNC: 'moderntaki_cloud_sync',
+    WA_ENC: 'moderntaki_wa_enc'
+  };
+
+  const WA_SHIELD_KEY = 'mt_wa_shield_2026';
+  const encodeWhatsApp = (rawPhone) => {
+    let digits = String(rawPhone || '').replace(/\D/g, '');
+    if (!digits) return '';
+    if (digits.startsWith('05') && digits.length === 11) digits = '9' + digits;
+    else if (digits.startsWith('5') && digits.length === 10) digits = '90' + digits;
+    if (digits.length < 10 || digits.length > 15) return '';
+    let xored = '';
+    for (let i = 0; i < digits.length; i++) {
+      xored += String.fromCharCode(digits.charCodeAt(i) ^ WA_SHIELD_KEY.charCodeAt(i % WA_SHIELD_KEY.length));
+    }
+    return btoa(xored);
+  };
+
+  const decodeWhatsApp = (encoded) => {
+    if (!encoded) return '';
+    try {
+      const raw = atob(String(encoded).trim());
+      let out = '';
+      for (let i = 0; i < raw.length; i++) {
+        out += String.fromCharCode(raw.charCodeAt(i) ^ WA_SHIELD_KEY.charCodeAt(i % WA_SHIELD_KEY.length));
+      }
+      return /^\d{10,15}$/.test(out) ? out : '';
+    } catch (e) {
+      return '';
+    }
   };
 
   // Clean, realistic jewelry catalog without exaggerated claims
@@ -816,18 +845,61 @@ const DB = (() => {
 
         const products = getItem(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
         let changed = false;
+        let waP1 = 0;
+        let waP2 = 0;
         rows.forEach(r => {
+          if (r.product_id === '__wa_p1') { waP1 = r.stock || 0; return; }
+          if (r.product_id === '__wa_p2') { waP2 = r.stock || 0; return; }
           const idx = products.findIndex(p => p.id === r.product_id);
           if (idx !== -1 && typeof r.stock === 'number' && products[idx].stock !== r.stock) {
             products[idx].stock = Math.max(0, r.stock);
             changed = true;
           }
         });
+        if (waP1 > 0 && waP2 > 10) {
+          const combined = String(waP1) + String(waP2).slice(1);
+          const enc = encodeWhatsApp(combined);
+          if (enc) setItem(STORAGE_KEYS.WA_ENC, enc);
+        }
         if (changed) setItem(STORAGE_KEYS.PRODUCTS, products);
         return { ok: true, changed };
       } catch (e) {
         return { ok: false };
       }
+    },
+
+    // WHATSAPP ORDER REDIRECTION (Number is never shown on page, only decoded upon order completion)
+    getWhatsAppOrderUrl: (order) => {
+      const winEnc = (typeof window !== 'undefined' && window.MODERNTAKI_WA_ENC) ? String(window.MODERNTAKI_WA_ENC) : '';
+      const localEnc = getItem(STORAGE_KEYS.WA_ENC, '');
+      const phone = decodeWhatsApp(winEnc || localEnc);
+      if (!phone || !order) return '';
+
+      const itemsLines = (Array.isArray(order.items) ? order.items : []).map(it => {
+        const title = (it.name && (it.name.tr || it.name)) || 'Takı';
+        const sizeInfo = it.size ? ` (${it.size})` : '';
+        return `• ${title}${sizeInfo} x${it.quantity} — ${it.totalPriceTRY} ₺`;
+      }).join('\n');
+
+      const addr = order.shippingAddress || {};
+      const msg = [
+        `✨ *ModernTakı Yeni Sipariş* ✨`,
+        `📦 *Sipariş No:* #${order.orderNumber}`,
+        ``,
+        `🛍️ *Ürünler:*`,
+        itemsLines,
+        ``,
+        `💰 *Toplam Tutar:* ${order.totalTRY} ₺`,
+        `💳 *Ödeme Tercihi:* ${order.paymentMethod || 'Havale / EFT'}`,
+        ``,
+        `👤 *Alıcı:* ${order.userName || '-'}`,
+        `📞 *Tel:* ${order.phone || '-'}`,
+        `📍 *Adres:* ${addr.address || '-'} / ${addr.city || '-'}`,
+        ``,
+        `Merhaba, siparişimi onaylamak ve ödeme bilgilerini almak istiyorum.`
+      ].join('\n');
+
+      return `https://api.whatsapp.com/send?phone=${encodeURIComponent(phone)}&text=${encodeURIComponent(msg)}`;
     },
 
     // PRIVACY-PROTECTED ORDER TRACKING (Requires BOTH Order Number AND Email/Phone)
